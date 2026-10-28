@@ -517,6 +517,9 @@
             <button type="button" onclick="validateRoundModal(document.getElementById('matrixRoundFilter').value)" class="btn-admin-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;">
               Validate Checklist
             </button>
+            <button type="button" onclick="clearAllTestSubmissionsConfirm()" class="btn-admin-caution" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;" title="Remove all filled test answers and claimed slots across teams">
+              Clear Test Answers
+            </button>
           </div>
           <svg class="admin-dropdown-chevron" viewBox="0 0 24 24"><path d="M6 9l6 6 6-6"></path></svg>
         </div>
@@ -2555,7 +2558,7 @@
           const teamId = slot.assignedTeamId;
           const teamObj = teamsList.find(t => t.id === teamId);
           const teamName = teamObj ? teamObj.teamName : getAdminCrewName(teamId);
-          const isClaimed = slot.claimed || (teamObj && teamObj.roundSolves && teamObj.roundSolves['1']);
+          const isClaimed = Boolean(teamObj && teamObj.roundSolves && teamObj.roundSolves['1']);
           const selectHtml = buildRiddleSelect(slot.riddleId, `assignSlotRiddle(1, '${slot.slotId}', this.value)`);
 
           const statusHtml = isClaimed
@@ -2572,6 +2575,7 @@
               <div style="display:flex; gap:6px;">
                 <button type="button" onclick="previewTeamChallenge('${teamId}', 1)" class="btn-table-action">Preview</button>
                 <button type="button" onclick="openOverrideModal(1, '${slot.slotId}')" class="btn-table-action">Override</button>
+                ${isClaimed ? `<button type="button" onclick="clearCrewSubmissionsConfirm('${teamId}', '${escapeHTML(teamName)}')" class="btn-table-action" style="color:var(--admin-danger); border-color:rgba(217,83,79,0.4);" title="Clear test answer and reset slot">Reset</button>` : ''}
               </div>
             </td>
           `;
@@ -2652,6 +2656,7 @@
             <td>
               <div style="display:flex; gap:6px;">
                 <button type="button" onclick="previewTeamChallenge('${team.id}', 2)" class="btn-table-action">Preview</button>
+                ${(team.roundSolves && team.roundSolves['2']) ? `<button type="button" onclick="clearCrewSubmissionsConfirm('${team.id}', '${escapeHTML(team.teamName)}')" class="btn-table-action" style="color:var(--admin-danger); border-color:rgba(217,83,79,0.4);" title="Clear test answer and reset slot">Reset</button>` : ''}
               </div>
             </td>
           `;
@@ -2722,6 +2727,7 @@
             <td>
               <div style="display:flex; gap:6px;">
                 <button type="button" onclick="previewTeamChallenge('${team.id}', 3)" class="btn-table-action">Preview</button>
+                ${(team.roundSolves && team.roundSolves['3']) ? `<button type="button" onclick="clearCrewSubmissionsConfirm('${team.id}', '${escapeHTML(team.teamName)}')" class="btn-table-action" style="color:var(--admin-danger); border-color:rgba(217,83,79,0.4);" title="Clear test answer and reset slot">Reset</button>` : ''}
               </div>
             </td>
           `;
@@ -4928,6 +4934,7 @@
             } else {
               showCustomConfirm("Submissions Cleared", data.message || "All test answers have been cleared!", true, null);
               if (typeof fetchTournamentStatus === 'function') fetchTournamentStatus();
+              if (typeof fetchAdminTournamentData === 'function') fetchAdminTournamentData();
             }
           })
           .catch(err => {
@@ -4956,6 +4963,7 @@
             } else {
               showCustomConfirm("Crew Reset", data.message || `Test submissions cleared for ${teamName}!`, true, null);
               if (typeof fetchTournamentStatus === 'function') fetchTournamentStatus();
+              if (typeof fetchAdminTournamentData === 'function') fetchAdminTournamentData();
             }
           })
           .catch(err => {

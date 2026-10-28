@@ -57,7 +57,7 @@
     "subtitle": "The Glass Horizon",
     "text": "Unlock the 4-byte XOR cipher using the alphabet's 21st letter to find your room, then look beyond the glass to identify the tricolour banner's maker.",
     "hint": "Arrr, let XOR unlock the door, then let ASCII reveal what you’re searching for. Once you reach your numbered quarters, look beyond the glass—not every treasure lies ashore! Find the tricolour, and seek the name of the mind who gave it its form.",
-    "password": "lost_code{view-indian-flag}"
+    "password": "lostcode{view_indian_flag}"
   },
   {
     "id": "riddle_r1_7",
@@ -67,7 +67,7 @@
     "subtitle": "The Institutional Charter",
     "text": "Decode the threshold's ASCII bytes to navigate to the chamber, then locate the framed charter surface that speaks of the voyage ahead and institutional dreams.",
     "hint": "Arrr, the Captain’s code has already revealed the way! Seek the place where a room’s number guides your feet, then search for a display that speaks not in words alone, but in the dreams and direction of your crew.",
-    "password": "lost_code{white board}"
+    "password": "lostcode{white_board}"
   },
   {
     "id": "riddle_r1_8",
@@ -77,7 +77,7 @@
     "subtitle": "The Tested Standard",
     "text": "Follow the rhyming clues of six steps and eight points to discover the Indian standards quality seal on the safety guardian.",
     "hint": "Arrr, mateys! Seek the guardian that stands ready when danger draws near. Look for the seal of Indian standards that marks a product as tested and trusted—but keep your eyes on the sixth deck, and never enter a restricted shaft to claim your prize!",
-    "password": "lost_code{fire hydrant - ISI mark}"
+    "password": "lostcode{fire_hydrant_isi_mark}"
   },
   {
     "id": "riddle_r1_9",
@@ -87,7 +87,7 @@
     "subtitle": "The Watcher’s Cipher",
     "text": "Decode the 5-byte machine name and apply the 4-digit modulo key with a Vigenère cipher to find the silent sentinel above the bustle.",
     "hint": "Arrr, mateys! Decode the five-byte message to uncover the watcher’s name. Then let the digits of the Captain’s key guide your cipher work. Seek the silent eye that records the world near the hall where knowledge is shared—identify it by its number, but touch not the guardian!",
-    "password": "lost_code{camera}"
+    "password": "lostcode{camera}"
   },
   {
     "id": "riddle_r1_10",
@@ -97,7 +97,7 @@
     "subtitle": "The Digital Mosaic",
     "text": "Solve the alchemist's elemental sequence and the physicist's invariant calculation to reveal where messages share a wall and find the scannable pattern.",
     "hint": "Arrr, mateys! The elements reveal the first part, while the unchanging property of light unlocks the shift. When science and code have done their work, seek the place where messages hang in plain sight—but one patterned square holds a secret meant for your device!",
-    "password": "lost_code{qr code}"
+    "password": "lostcode{pirates_token}"
   },
   {
     "id": "riddle_r2_g1_1",
@@ -107,7 +107,7 @@
     "subtitle": "The Dual Current Conduit",
     "text": "Apply Ohm's law to calculate the current from three volts and six ohms, double the discovered value to find your deck, and navigate to where art meets an unexpected conduit opening.",
     "hint": "Arrr, mateys! Let Ohm’s law chart your course: divide the volts by the resistance, then double the current to discover your deck. Seek the artwork of good cheer, and find the conduit opening nearby—the bounty lies beside the sign, not beyond the door!",
-    "password": "lost_code{pipelines - in hole}"
+    "password": "lostcode{pipelines_in_hole}"
   },
   {
     "id": "riddle_r2_g1_2",
@@ -117,7 +117,7 @@
     "subtitle": "The Alchemist's Deck",
     "text": "Translate the sea elements' atomic numbers into 8-bit binary and ASCII to discover where knowledge is framed in the classroom corridor.",
     "hint": "Arrr, mateys! The periodic table holds the numbers, but beware—the elements alone won’t spell out your destination. Think carefully about how atomic numbers become binary, and where students’ knowledge is displayed for all to see. Your next clue hangs where lessons meet the open corridor!",
-    "password": "lost_code{bulletin board}"
+    "password": "lostcode{bulletin_board}"
   },
   {
     "id": "riddle_r2_g1_3",
@@ -127,7 +127,7 @@
     "subtitle": "The Anchored Vessel",
     "text": "Correct the corrupted first byte of the transmission, follow the path of light toward green giants, and discover the vessel cradled in wood.",
     "hint": "Arrr, mateys! The first byte has betrayed you—trust not the whole message! Decode the remaining letters, then follow the path of light to where green giants take root. Seek the seven proud capitals, and find the vessel that never sails, cradled by a wooden guardian.",
-    "password": "lost_code{garden bowl}"
+    "password": "lostcode{garden_bowl}"
   },
   {
     "id": "riddle_r2_g2_1",

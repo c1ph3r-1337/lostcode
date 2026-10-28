@@ -204,10 +204,101 @@ function saveRiddleBank(data) {
   atomicWriteJsonSync(riddleBankFilePath, data);
 }
 
+function reconcileTournamentAssignmentsWithTeams(assignments) {
+  if (!assignments || !assignments.rounds || !Array.isArray(teams)) return assignments;
+  let changed = false;
+
+  // Round 1 check
+  const r1 = assignments.rounds['1'];
+  if (r1 && Array.isArray(r1.slots)) {
+    r1.slots.forEach(slot => {
+      if (slot.claimed) {
+        const team = teams.find(t => t.id === slot.assignedTeamId || t.id === slot.claimedBy);
+        const hasSolved = team && team.roundSolves && team.roundSolves['1'];
+        if (!hasSolved) {
+          delete slot.claimed;
+          delete slot.claimedBy;
+          delete slot.claimedAt;
+          changed = true;
+        }
+      }
+    });
+  }
+
+  // Round 2 check
+  const r2 = assignments.rounds['2'];
+  if (r2 && r2.groups) {
+    Object.keys(r2.groups).forEach(g => {
+      const slots = r2.groups[g]?.slots;
+      if (Array.isArray(slots)) {
+        slots.forEach(slot => {
+          if (slot.claimed) {
+            const team = teams.find(t => t.id === slot.claimedBy);
+            const hasSolved = team && team.roundSolves && team.roundSolves['2'];
+            if (!hasSolved) {
+              delete slot.claimed;
+              delete slot.claimedBy;
+              delete slot.claimedAt;
+              changed = true;
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // Round 3 check
+  const r3 = assignments.rounds['3'];
+  if (r3 && r3.groups) {
+    Object.keys(r3.groups).forEach(g => {
+      const slots = r3.groups[g]?.slots;
+      if (Array.isArray(slots)) {
+        slots.forEach(slot => {
+          if (slot.claimed) {
+            const team = teams.find(t => t.id === slot.claimedBy);
+            const hasSolved = team && team.roundSolves && team.roundSolves['3'];
+            if (!hasSolved) {
+              delete slot.claimed;
+              delete slot.claimedBy;
+              delete slot.claimedAt;
+              changed = true;
+            }
+          }
+        });
+      }
+    });
+  }
+
+  // Round 4 check
+  const r4 = assignments.rounds['4'];
+  if (r4 && Array.isArray(r4.slots)) {
+    r4.slots.forEach(slot => {
+      if (slot.claimed) {
+        const team = teams.find(t => t.id === slot.claimedBy);
+        const hasSolved = team && team.roundSolves && team.roundSolves['4'];
+        if (!hasSolved) {
+          delete slot.claimed;
+          delete slot.claimedBy;
+          delete slot.claimedAt;
+          changed = true;
+        }
+      }
+    });
+  }
+
+  if (changed) {
+    try {
+      atomicWriteJsonSync(tournamentAssignmentsFilePath, assignments);
+    } catch (e) {}
+  }
+  return assignments;
+}
+
 function getTournamentAssignments() {
   if (!fs.existsSync(tournamentAssignmentsFilePath)) return { rounds: {} };
   try {
-    return JSON.parse(fs.readFileSync(tournamentAssignmentsFilePath, 'utf8'));
+    const data = JSON.parse(fs.readFileSync(tournamentAssignmentsFilePath, 'utf8'));
+    return reconcileTournamentAssignmentsWithTeams(data);
   } catch (e) {
     return { rounds: {} };
   }
@@ -719,7 +810,13 @@ function checkAnswerMatch(submitted, expected, rule) {
     const m = str.match(/^(?:lostcode|lost_code)\{(.*)\}$/i);
     return m ? m[1].trim() : str;
   };
-  return unwrap(s) === unwrap(e);
+  const uS = unwrap(s);
+  const uE = unwrap(e);
+  if (uS === uE) return true;
+
+  // Space, hyphen, and underscore tolerance: normalize sequences of spaces/hyphens/underscores
+  const norm = (str) => str.replace(/[\s\-_]+/g, '_').toLowerCase();
+  return norm(uS) === norm(uE);
 }
 
 app.post('/api/team/submit', (req, res) => {

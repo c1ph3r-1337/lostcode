@@ -9,7 +9,7 @@
   },
   "2": {
     "status": "Locked",
-    "startedAt": "2026-10-28T22:01:03.482Z",
+    "startedAt": null,
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
@@ -17,7 +17,7 @@
   },
   "3": {
     "status": "Locked",
-    "startedAt": "2026-10-28T22:01:03.520Z",
+    "startedAt": null,
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
@@ -25,7 +25,7 @@
   },
   "4": {
     "status": "Locked",
-    "startedAt": "2026-10-28T22:01:03.531Z",
+    "startedAt": null,
     "completedAt": null,
     "eliminated": [],
     "qualifiers": [],

@@ -108,7 +108,7 @@
     "id": "riddle_r1_6",
     "title": "The Glass Horizon",
     "text": "Unlock the 4-byte XOR cipher using the alphabet's 21st letter to find your room, then look beyond the glass to identify the tricolour banner's maker.",
-    "expectedAnswer": "lost_code{view-indian-flag}",
+    "expectedAnswer": "lostcode{view_indian_flag}",
     "targetRound": 1,
     "status": "published",
     "points": 100,
@@ -123,13 +123,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r1_7": {
     "id": "riddle_r1_7",
     "title": "The Institutional Charter",
     "text": "Decode the threshold's ASCII bytes to navigate to the chamber, then locate the framed charter surface that speaks of the voyage ahead and institutional dreams.",
-    "expectedAnswer": "lost_code{white board}",
+    "expectedAnswer": "lostcode{white_board}",
     "targetRound": 1,
     "status": "published",
     "points": 100,
@@ -144,13 +144,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r1_8": {
     "id": "riddle_r1_8",
     "title": "The Tested Standard",
     "text": "Follow the rhyming clues of six steps and eight points to discover the Indian standards quality seal on the safety guardian.",
-    "expectedAnswer": "lost_code{fire hydrant - ISI mark}",
+    "expectedAnswer": "lostcode{fire_hydrant_isi_mark}",
     "targetRound": 1,
     "status": "published",
     "points": 100,
@@ -165,13 +165,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r1_9": {
     "id": "riddle_r1_9",
     "title": "The Watcher’s Cipher",
     "text": "Decode the 5-byte machine name and apply the 4-digit modulo key with a Vigenère cipher to find the silent sentinel above the bustle.",
-    "expectedAnswer": "lost_code{camera}",
+    "expectedAnswer": "lostcode{camera}",
     "targetRound": 1,
     "status": "published",
     "points": 100,
@@ -186,13 +186,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r1_10": {
     "id": "riddle_r1_10",
     "title": "The Digital Mosaic",
     "text": "Solve the alchemist's elemental sequence and the physicist's invariant calculation to reveal where messages share a wall and find the scannable pattern.",
-    "expectedAnswer": "lost_code{qr code}",
+    "expectedAnswer": "lostcode{pirates_token}",
     "targetRound": 1,
     "status": "published",
     "points": 100,
@@ -207,13 +207,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r2_g1_1": {
     "id": "riddle_r2_g1_1",
     "title": "The Dual Current Conduit",
     "text": "Apply Ohm's law to calculate the current from three volts and six ohms, double the discovered value to find your deck, and navigate to where art meets an unexpected conduit opening.",
-    "expectedAnswer": "lost_code{pipelines - in hole}",
+    "expectedAnswer": "lostcode{pipelines_in_hole}",
     "targetRound": 2,
     "status": "published",
     "points": 100,
@@ -228,13 +228,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r2_g1_2": {
     "id": "riddle_r2_g1_2",
     "title": "The Alchemist's Deck",
     "text": "Translate the sea elements' atomic numbers into 8-bit binary and ASCII to discover where knowledge is framed in the classroom corridor.",
-    "expectedAnswer": "lost_code{bulletin board}",
+    "expectedAnswer": "lostcode{bulletin_board}",
     "targetRound": 2,
     "status": "published",
     "points": 100,
@@ -249,13 +249,13 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r2_g1_3": {
     "id": "riddle_r2_g1_3",
     "title": "The Anchored Vessel",
     "text": "Correct the corrupted first byte of the transmission, follow the path of light toward green giants, and discover the vessel cradled in wood.",
-    "expectedAnswer": "lost_code{garden bowl}",
+    "expectedAnswer": "lostcode{garden_bowl}",
     "targetRound": 2,
     "status": "published",
     "points": 100,
@@ -270,7 +270,7 @@
       }
     ],
     "createdAt": "2026-10-28T21:34:55.371Z",
-    "updatedAt": "2026-10-28T21:34:55.371Z"
+    "updatedAt": "2026-10-28T23:38:46.842Z"
   },
   "riddle_r2_g2_1": {
     "id": "riddle_r2_g2_1",

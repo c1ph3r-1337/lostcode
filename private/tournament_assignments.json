@@ -10,55 +10,62 @@
         {
           "slotId": "R1_S1",
           "riddleId": "riddle_r1_1",
-          "assignedTeamId": "crew_1_buccaneers"
+          "assignedTeamId": "crew_1_buccaneers",
+          "claimed": false
         },
         {
           "slotId": "R1_S2",
           "riddleId": "riddle_r1_2",
-          "assignedTeamId": "crew_2_cutthroats"
+          "assignedTeamId": "crew_2_cutthroats",
+          "claimed": false
         },
         {
           "slotId": "R1_S3",
           "riddleId": "riddle_r1_3",
-          "assignedTeamId": "crew_3_corsairs"
+          "assignedTeamId": "crew_3_corsairs",
+          "claimed": false
         },
         {
           "slotId": "R1_S4",
           "riddleId": "riddle_r1_4",
-          "assignedTeamId": "crew_4_krakens"
+          "assignedTeamId": "crew_4_krakens",
+          "claimed": false
         },
         {
           "slotId": "R1_S5",
           "riddleId": "riddle_r1_5",
-          "assignedTeamId": "crew_5_scallywags"
+          "assignedTeamId": "crew_5_scallywags",
+          "claimed": false
         },
         {
           "slotId": "R1_S6",
           "riddleId": "riddle_r1_6",
-          "assignedTeamId": "crew_6_privateers"
+          "assignedTeamId": "crew_6_privateers",
+          "claimed": false
         },
         {
           "slotId": "R1_S7",
           "riddleId": "riddle_r1_7",
           "assignedTeamId": "crew_7_blackflags",
-          "claimed": true,
-          "claimedBy": "crew_7_blackflags",
-          "claimedAt": "2026-10-28T21:39:28.413Z"
+          "claimed": false
         },
         {
           "slotId": "R1_S8",
           "riddleId": "riddle_r1_8",
-          "assignedTeamId": "crew_8_plunderers"
+          "assignedTeamId": "crew_8_plunderers",
+          "claimed": false
         },
         {
           "slotId": "R1_S9",
           "riddleId": "riddle_r1_9",
-          "assignedTeamId": "crew_9_dreadsails"
+          "assignedTeamId": "crew_9_dreadsails",
+          "claimed": false
         },
         {
           "slotId": "R1_S10",
           "riddleId": "riddle_r1_10",
-          "assignedTeamId": "crew_10_searavens"
+          "assignedTeamId": "crew_10_searavens",
+          "claimed": false
         }
       ]
     },
@@ -88,7 +95,8 @@
                 "crew_5_scallywags",
                 "crew_7_blackflags",
                 "crew_9_dreadsails"
-              ]
+              ],
+              "claimed": false
             },
             {
               "slotId": "R2_GA_S2",
@@ -99,7 +107,8 @@
                 "crew_5_scallywags",
                 "crew_7_blackflags",
                 "crew_9_dreadsails"
-              ]
+              ],
+              "claimed": false
             },
             {
               "slotId": "R2_GA_S3",
@@ -110,7 +119,8 @@
                 "crew_5_scallywags",
                 "crew_7_blackflags",
                 "crew_9_dreadsails"
-              ]
+              ],
+              "claimed": false
             }
           ]
         },
@@ -133,7 +143,8 @@
                 "crew_6_privateers",
                 "crew_8_plunderers",
                 "crew_10_searavens"
-              ]
+              ],
+              "claimed": false
             },
             {
               "slotId": "R2_GB_S2",
@@ -144,7 +155,8 @@
                 "crew_6_privateers",
                 "crew_8_plunderers",
                 "crew_10_searavens"
-              ]
+              ],
+              "claimed": false
             },
             {
               "slotId": "R2_GB_S3",
@@ -155,7 +167,8 @@
                 "crew_6_privateers",
                 "crew_8_plunderers",
                 "crew_10_searavens"
-              ]
+              ],
+              "claimed": false
             }
           ]
         }
@@ -185,7 +198,8 @@
                 "crew_5_scallywags",
                 "crew_7_blackflags",
                 "crew_9_dreadsails"
-              ]
+              ],
+              "claimed": false
             }
           ]
         },
@@ -206,7 +220,8 @@
                 "crew_6_privateers",
                 "crew_8_plunderers",
                 "crew_10_searavens"
-              ]
+              ],
+              "claimed": false
             }
           ]
         }
@@ -229,7 +244,8 @@
             "crew_5_scallywags",
             "crew_7_blackflags",
             "crew_9_dreadsails"
-          ]
+          ],
+          "claimed": false
         },
         {
           "slotId": "R4_S2",
@@ -240,7 +256,8 @@
             "crew_6_privateers",
             "crew_8_plunderers",
             "crew_10_searavens"
-          ]
+          ],
+          "claimed": false
         }
       ]
     }
