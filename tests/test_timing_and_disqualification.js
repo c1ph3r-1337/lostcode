@@ -1,12 +1,33 @@
 const assert = require('assert');
 const http = require('http');
-const { app, getCredentials } = require('../server.js');
+const path = require('path');
+const fs = require('fs');
+const {
+  app,
+  teams,
+  getCredentials,
+  getRiddleBank,
+  saveRiddleBank,
+  getTournamentAssignments,
+  saveTournamentAssignments,
+  getRoundState,
+  saveRoundState,
+  getConfig,
+  saveConfig
+} = require('../server.js');
 
 async function runTests() {
   console.log('--- Starting Timing & Disqualification Test Suite ---');
   const server = http.createServer(app);
   await new Promise(resolve => server.listen(0, resolve));
   const baseUrl = `http://localhost:${server.address().port}`;
+
+  const teamsPath = path.join(__dirname, '../teams.json');
+  const initialTeams = JSON.parse(fs.readFileSync(teamsPath, 'utf8'));
+  const initialRiddleBank = JSON.parse(JSON.stringify(getRiddleBank()));
+  const initialAssignments = JSON.parse(JSON.stringify(getTournamentAssignments()));
+  const initialRoundState = JSON.parse(JSON.stringify(getRoundState()));
+  const initialConfig = JSON.parse(JSON.stringify(getConfig()));
 
   try {
     const creds = getCredentials();
@@ -244,6 +265,13 @@ async function runTests() {
 
     console.log('\n>>> ALL 11 TIMING, REVERSE TIME & DISQUALIFICATION TESTS PASSED SUCCESSFULLY! <<<');
   } finally {
+    saveRiddleBank(initialRiddleBank);
+    saveTournamentAssignments(initialAssignments);
+    saveRoundState(initialRoundState);
+    saveConfig(initialConfig);
+    fs.writeFileSync(teamsPath, JSON.stringify(initialTeams, null, 2), 'utf8');
+    teams.length = 0;
+    initialTeams.forEach(t => teams.push(t));
     server.close();
   }
 }
