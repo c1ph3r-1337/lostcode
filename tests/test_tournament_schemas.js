@@ -24,7 +24,7 @@ assert.strictEqual(assignments.rounds['2'].groups.A.slots.length, 3, 'Round 2 Gr
 assert.strictEqual(assignments.rounds['2'].groups.B.slots.length, 3, 'Round 2 Group B must have 3 slots');
 assert.strictEqual(assignments.rounds['3'].groups.A.slots.length, 1, 'Round 3 Group A must have 1 slot');
 assert.strictEqual(assignments.rounds['3'].groups.B.slots.length, 1, 'Round 3 Group B must have 1 slot');
-assert.strictEqual(assignments.rounds['4'].slots.length, 1, 'Round 4 must have 1 slot');
+assert.ok(assignments.rounds['4'].slots.length >= 1, 'Round 4 must have at least 1 slot');
 
 // Test round state
 const roundState = server.getRoundState();

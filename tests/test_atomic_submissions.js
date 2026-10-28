@@ -63,12 +63,18 @@ async function runTests() {
     const bucMem = teams.find(t => t.id === 'crew_1_buccaneers');
     if (bucMem) {
       bucMem.currentRound = 2;
+      bucMem.disqualified = false;
+      delete bucMem.disqualifiedReason;
       if (bucMem.roundSolves) delete bucMem.roundSolves['2'];
+      if (bucMem.roundTimers) delete bucMem.roundTimers['2'];
     }
     const corMem = teams.find(t => t.id === 'crew_3_corsairs');
     if (corMem) {
       corMem.currentRound = 2;
+      corMem.disqualified = false;
+      delete corMem.disqualifiedReason;
       if (corMem.roundSolves) delete corMem.roundSolves['2'];
+      if (corMem.roundTimers) delete corMem.roundTimers['2'];
     }
 
     const creds = getCredentials();

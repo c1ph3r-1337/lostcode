@@ -43,7 +43,7 @@
           "assignedTeamId": "crew_7_blackflags",
           "claimed": true,
           "claimedBy": "crew_7_blackflags",
-          "claimedAt": "2026-10-27T21:17:55.201Z"
+          "claimedAt": "2026-10-28T21:39:28.413Z"
         },
         {
           "slotId": "R1_S8",
@@ -221,9 +221,26 @@
       "teams": [],
       "slots": [
         {
-          "slotId": "R4_FINAL_S1",
-          "riddleId": "riddle_r4_final",
-          "eligibleTeams": []
+          "slotId": "R4_S1",
+          "riddleId": "riddle_r4_s1",
+          "eligibleTeams": [
+            "crew_1_buccaneers",
+            "crew_3_corsairs",
+            "crew_5_scallywags",
+            "crew_7_blackflags",
+            "crew_9_dreadsails"
+          ]
+        },
+        {
+          "slotId": "R4_S2",
+          "riddleId": "riddle_r4_s2",
+          "eligibleTeams": [
+            "crew_2_cutthroats",
+            "crew_4_krakens",
+            "crew_6_privateers",
+            "crew_8_plunderers",
+            "crew_10_searavens"
+          ]
         }
       ]
     }

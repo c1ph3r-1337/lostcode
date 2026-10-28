@@ -302,7 +302,16 @@ function findTeamSlotInRound(assignments, roundNum, teamId) {
 
   if (roundNum === 4) {
     const slots = roundData.slots || [];
-    return slots[0] || null;
+    if (slots.length === 0) return null;
+    if (slots.length === 1) return slots[0];
+    const assigned = slots.find(s => s.assignedTeamId === teamId);
+    if (assigned) return assigned;
+    const eligible = slots.find(s => Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(teamId));
+    if (eligible) return eligible;
+    const teamObj = teams.find(t => t.id === teamId);
+    const grp = teamObj ? (teamObj.groupRound3 || teamObj.groupRound2) : null;
+    if (grp === 'B' && slots[1]) return slots[1];
+    return slots[0];
   }
 
   return null;
@@ -1246,18 +1255,19 @@ function validateRoundConfiguration(roundNum) {
     }
   } else if (roundNum === 4) {
     const slots = roundData.slots || [];
-    if (slots.length !== 1) {
-      errors.push(`Round 4 requires exactly 1 qualifying championship slot.`);
+    if (slots.length < 1) {
+      errors.push(`Round 4 requires at least 1 championship slot (found ${slots.length}).`);
     }
-    const s = slots[0];
-    if (!s || !s.riddleId) {
-      errors.push(`Round 4 final championship riddle has not been assigned.`);
-    } else {
-      const riddle = riddleBank[s.riddleId];
-      if (!riddle || riddle.status !== 'published' || !riddle.expectedAnswer) {
-        errors.push(`Round 4 final riddle is missing, empty, or in Draft state.`);
+    slots.forEach((s, idx) => {
+      if (!s || !s.riddleId) {
+        errors.push(`Round 4 slot ${idx + 1} riddle has not been assigned.`);
+      } else {
+        const riddle = riddleBank[s.riddleId];
+        if (!riddle || riddle.status !== 'published' || !riddle.expectedAnswer) {
+          errors.push(`Round 4 slot ${idx + 1} (${s.riddleId}) riddle is missing or in Draft state.`);
+        }
       }
-    }
+    });
   }
 
   return {
@@ -3013,10 +3023,12 @@ app.post('/api/challenge/flag', (req, res) => {
           if (currentAssigns.rounds && currentAssigns.rounds['4']) {
             if (!Array.isArray(currentAssigns.rounds['4'].teams)) currentAssigns.rounds['4'].teams = [];
             if (!currentAssigns.rounds['4'].teams.includes(team.id)) currentAssigns.rounds['4'].teams.push(team.id);
-            if (currentAssigns.rounds['4'].slots && currentAssigns.rounds['4'].slots[0]) {
-              if (!Array.isArray(currentAssigns.rounds['4'].slots[0].eligibleTeams)) currentAssigns.rounds['4'].slots[0].eligibleTeams = [];
-              if (!currentAssigns.rounds['4'].slots[0].eligibleTeams.includes(team.id)) {
-                currentAssigns.rounds['4'].slots[0].eligibleTeams.push(team.id);
+            const targetSlotIdx = group === 'B' ? 1 : 0;
+            const targetSlot = currentAssigns.rounds['4'].slots && (currentAssigns.rounds['4'].slots[targetSlotIdx] || currentAssigns.rounds['4'].slots[0]);
+            if (targetSlot) {
+              if (!Array.isArray(targetSlot.eligibleTeams)) targetSlot.eligibleTeams = [];
+              if (!targetSlot.eligibleTeams.includes(team.id)) {
+                targetSlot.eligibleTeams.push(team.id);
               }
             }
             saveTournamentAssignments(currentAssigns);
@@ -3561,6 +3573,8 @@ module.exports = {
   DEFAULT_TOURNAMENT_CREDENTIALS,
   restoreDefaultTournamentCredentials,
   logAuditEvent,
+  findTeamSlotInRound,
+  validateRoundConfiguration,
   checkTeamExpiryAndDisqualify,
   startTournamentHeartbeatService,
   stopTournamentHeartbeatService
