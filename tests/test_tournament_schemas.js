@@ -29,10 +29,10 @@ assert.ok(assignments.rounds['4'].slots.length >= 1, 'Round 4 must have at least
 // Test round state
 const roundState = server.getRoundState();
 assert.ok(roundState['1'], 'Round 1 state must exist');
-assert.ok(['Draft', 'Live'].includes(roundState['1'].status), 'Round 1 status should be Draft or Live');
-assert.ok(['Locked', 'Live'].includes(roundState['2'].status), 'Round 2 status should be Locked or Live');
-assert.ok(['Locked', 'Live'].includes(roundState['3'].status), 'Round 3 status should be Locked or Live');
-assert.ok(['Locked', 'Live'].includes(roundState['4'].status), 'Round 4 status should be Locked or Live');
+assert.ok(['Draft', 'Live', 'Completed'].includes(roundState['1'].status), 'Round 1 status should be Draft, Live, or Completed');
+assert.ok(['Locked', 'Live', 'Completed'].includes(roundState['2'].status), 'Round 2 status should be Locked, Live, or Completed');
+assert.ok(['Locked', 'Live', 'Completed'].includes(roundState['3'].status), 'Round 3 status should be Locked, Live, or Completed');
+assert.ok(['Locked', 'Live', 'Completed'].includes(roundState['4'].status), 'Round 4 status should be Locked, Live, or Completed');
 
 // Test audit logging
 const testEvent = {

@@ -278,17 +278,26 @@ function findTeamSlotInRound(assignments, roundNum, teamId) {
       const isTeamInGroup = (Array.isArray(group.teams) && group.teams.includes(teamId)) || (teamGroup === gKey);
       if (isTeamInGroup) {
         const slots = group.slots || [];
-        // 1. Explicit team assignment
-        let slot = slots.find(s => s.assignedTeamId === teamId);
-        // 2. If no explicit assignedTeamId, find first unclaimed slot team is eligible for
+        const teamAllocatedRiddle = (teamObj && teamObj.allocatedRiddles && teamObj.allocatedRiddles[roundKey]) || null;
+
+        // 1. If team already claimed a slot, return that claimed slot
+        let slot = slots.find(s => s.claimedBy === teamId);
+        if (slot) return { ...slot, groupId: gKey };
+
+        // 2. Explicit team assignment
+        slot = slots.find(s => s.assignedTeamId === teamId);
+        if (slot) return { ...slot, groupId: gKey };
+
+        // 3. If no explicit assignedTeamId, find first unclaimed slot team is eligible for
+        slot = slots.find(s => Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(teamId) && !s.claimed);
         if (!slot) {
-          slot = slots.find(s => Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(teamId) && !s.claimed);
+          slot = slots.find(s => !s.claimed);
         }
-        // 3. Fallback to any slot team is eligible for (even if claimed)
+        // 4. Fallback to any slot team is eligible for (even if claimed)
         if (!slot) {
           slot = slots.find(s => Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(teamId));
         }
-        // 4. Fallback to first slot
+        // 5. Fallback to first slot
         if (!slot) {
           slot = slots[0] || null;
         }
@@ -303,15 +312,10 @@ function findTeamSlotInRound(assignments, roundNum, teamId) {
   if (roundNum === 4) {
     const slots = roundData.slots || [];
     if (slots.length === 0) return null;
-    if (slots.length === 1) return slots[0];
-    const assigned = slots.find(s => s.assignedTeamId === teamId);
-    if (assigned) return assigned;
-    const eligible = slots.find(s => Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(teamId));
-    if (eligible) return eligible;
     const teamObj = teams.find(t => t.id === teamId);
     const grp = teamObj ? (teamObj.groupRound3 || teamObj.groupRound2) : null;
-    if (grp === 'B' && slots[1]) return slots[1];
-    return slots[0];
+    const targetSlot = (grp === 'B' && slots[1]) ? slots[1] : slots[0];
+    return { ...targetSlot };
   }
 
   return null;
@@ -736,16 +740,24 @@ app.post('/api/team/submit', (req, res) => {
     return res.status(400).json({ error: 'Flag or answer cannot be empty.' });
   }
 
+  const requestedRound = parseInt(round, 10);
+  const roundNum = (!isNaN(requestedRound) && requestedRound >= 1 && requestedRound <= 4)
+    ? requestedRound
+    : (team.currentRound || 1);
+
+  const roundState = getRoundState();
+  const currentRoundState = roundState[String(roundNum)];
+  if (currentRoundState && currentRoundState.status === 'Completed') {
+    return res.status(400).json({
+      error: `Round ${roundNum} is not currently Live (Status: Completed).`
+    });
+  }
+
   if (team.eliminated) {
     return res.status(403).json({
       error: `Your crew was marooned in Round ${team.eliminatedRound || 'previous'} and cannot submit flags.`
     });
   }
-
-  const requestedRound = parseInt(round, 10);
-  const roundNum = (!isNaN(requestedRound) && requestedRound >= 1 && requestedRound <= 4)
-    ? requestedRound
-    : (team.currentRound || 1);
 
   // Check if round timer has expired
   if (checkTeamExpiryAndDisqualify(team, String(roundNum))) {
@@ -769,8 +781,6 @@ app.post('/api/team/submit', (req, res) => {
     });
   }
 
-  const roundState = getRoundState();
-  const currentRoundState = roundState[String(roundNum)];
   if (!currentRoundState || currentRoundState.status !== 'Live') {
     return res.status(400).json({
       error: `Round ${roundNum} is not currently Live (Status: ${currentRoundState?.status || 'Locked'}).`
@@ -785,20 +795,89 @@ app.post('/api/team/submit', (req, res) => {
   }
 
   const assignments = getTournamentAssignments();
+  const group = (roundNum >= 3 ? team.groupRound3 : team.groupRound2) || 'A';
   const slot = findTeamSlotInRound(assignments, roundNum, team.id);
-  if (!slot || !slot.riddleId) {
+  const riddleBank = getRiddleBank();
+
+  // If in Round 2, check if group is already full (3 qualifiers claimed)
+  if (roundNum === 2) {
+    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === group && t.roundSolves && t.roundSolves['2']);
+    if (solvedInGroup.length >= 3) {
+      team.eliminated = true;
+      team.eliminatedRound = 2;
+      team.eliminatedAt = Date.now();
+      team.eliminatedReason = `Walked the Plank in Round 2: Top 3 spots in Group ${group} have already been claimed! Your crew was outpaced.`;
+      try { fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2)); } catch (e) {}
+      io.emit('teamsUpdate');
+      io.emit('tournamentUpdate');
+      return res.json({
+        success: false,
+        message: `Treasure claimed! All 3 qualifying spots in Group ${group} have already been claimed! Your crew was outpaced and has Walked the Plank.`,
+        qualified: false,
+        eliminated: true
+      });
+    }
+  } else if (roundNum === 3) {
+    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && (t.groupRound3 || t.groupRound2) === group && t.roundSolves && t.roundSolves['3']);
+    if (solvedInGroup.length >= 1) {
+      team.eliminated = true;
+      team.eliminatedRound = 3;
+      team.eliminatedAt = Date.now();
+      team.eliminatedReason = `Walked the Plank in Round 3: Finalist spot for Group ${group} was already claimed!`;
+      try { fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2)); } catch (e) {}
+      io.emit('teamsUpdate');
+      io.emit('tournamentUpdate');
+      return res.json({
+        success: false,
+        message: `Treasure claimed! The finalist spot for Group ${group} has already been claimed! Your crew has Walked the Plank.`,
+        qualified: false,
+        eliminated: true
+      });
+    }
+  }
+
+  // Candidate riddle IDs for this team and round
+  const candidateRiddleIds = [];
+  if (slot && slot.riddleId) candidateRiddleIds.push(slot.riddleId);
+  if (team.allocatedRiddles && team.allocatedRiddles[String(roundNum)]) {
+    const allocId = team.allocatedRiddles[String(roundNum)];
+    if (!candidateRiddleIds.includes(allocId)) candidateRiddleIds.push(allocId);
+  }
+
+  // Also include any slots where this team is specifically eligible or assigned
+  if (roundNum === 2 || roundNum === 3) {
+    const grp = assignments.rounds[String(roundNum)]?.groups?.[group];
+    if (grp && Array.isArray(grp.slots)) {
+      grp.slots.forEach(s => {
+        if (s.riddleId && (s.assignedTeamId === team.id || (Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(team.id)))) {
+          if (!candidateRiddleIds.includes(s.riddleId)) candidateRiddleIds.push(s.riddleId);
+        }
+      });
+    }
+  } else if (roundNum === 4) {
+    const slots = assignments.rounds['4']?.slots || [];
+    slots.forEach(s => {
+      if (s.riddleId && (s.assignedTeamId === team.id || (Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(team.id)))) {
+        if (!candidateRiddleIds.includes(s.riddleId)) candidateRiddleIds.push(s.riddleId);
+      }
+    });
+  }
+
+  if (candidateRiddleIds.length === 0) {
     return res.status(400).json({ error: 'No active riddle assigned to your crew in this round.' });
   }
 
-  const riddleBank = getRiddleBank();
-  const riddle = riddleBank[slot.riddleId];
-  if (!riddle || riddle.status !== 'published') {
-    return res.status(400).json({ error: 'Riddle is not published for competition.' });
+  // Check answer matching against candidate riddles
+  let riddle = null;
+  for (const rId of candidateRiddleIds) {
+    const rObj = riddleBank[rId];
+    if (rObj && rObj.status === 'published' && checkAnswerMatch(answer, rObj.expectedAnswer, rObj.answerMatchingRule)) {
+      riddle = rObj;
+      break;
+    }
   }
 
-  // Answer matching check
-  const isMatch = checkAnswerMatch(answer, riddle.expectedAnswer, riddle.answerMatchingRule);
-  if (!isMatch) {
+  if (!riddle) {
     return res.json({
       success: false,
       message: 'Avast! That flag be incorrect. Check your coordinates and try again.',
@@ -806,8 +885,28 @@ app.post('/api/team/submit', (req, res) => {
     });
   }
 
-  // Check atomic slot claim
-  if (slot.claimed) {
+  // Find if this riddle is associated with a specific slot in the current round
+  let slotForRiddle = null;
+  if (roundNum === 1) {
+    slotForRiddle = (assignments.rounds['1']?.slots || []).find(s => s.riddleId === riddle.id);
+  } else if (roundNum === 2 || roundNum === 3) {
+    const grp = assignments.rounds[String(roundNum)]?.groups?.[group];
+    slotForRiddle = grp && (grp.slots || []).find(s => s.riddleId === riddle.id);
+  } else if (roundNum === 4) {
+    slotForRiddle = (assignments.rounds['4']?.slots || []).find(s => s.riddleId === riddle.id);
+  }
+
+  // If the slot specifically associated with this riddle is already claimed by another crew:
+  if (slotForRiddle && slotForRiddle.claimed && slotForRiddle.claimedBy && slotForRiddle.claimedBy !== team.id) {
+    return res.json({
+      success: false,
+      message: `Treasure claimed! Another crew claimed this slot seconds before ye.`,
+      qualified: false
+    });
+  }
+
+  // Check atomic slot claim on default slot
+  if (slot && slot.claimed && slot.claimedBy && slot.claimedBy !== team.id) {
     return res.json({
       success: false,
       message: `Treasure claimed! Another crew claimed this slot seconds before ye.`,
@@ -817,23 +916,60 @@ app.post('/api/team/submit', (req, res) => {
 
   // Synchronously claim slot
   const claimTime = new Date().toISOString();
-  slot.claimed = true;
-  slot.claimedBy = team.id;
-  slot.claimedAt = claimTime;
+  let claimedSlotId = slot ? slot.slotId : `R${roundNum}_S_CLAIMED`;
 
   // Persist into assignments blueprint
   if (roundNum === 1) {
-    const target = assignments.rounds['1'].slots.find(s => s.slotId === slot.slotId);
-    if (target) { target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; }
-  } else if (roundNum === 2 || roundNum === 3) {
-    const grp = assignments.rounds[String(roundNum)].groups[slot.groupId];
+    const target = (assignments.rounds['1'].slots || []).find(s => (slot && s.slotId === slot.slotId) || s.assignedTeamId === team.id || s.riddleId === riddle.id);
+    if (target) {
+      if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
+        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
+      }
+      target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
+    }
+  } else if (roundNum === 2) {
+    const grp = assignments.rounds['2']?.groups?.[group];
     if (grp) {
-      const target = grp.slots.find(s => s.slotId === slot.slotId);
-      if (target) { target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; }
+      let target = null;
+      if (slotForRiddle) {
+        target = slotForRiddle;
+      } else if (slot && slot.slotId) {
+        target = (grp.slots || []).find(s => s.slotId === slot.slotId);
+      }
+      if (target && target.claimed && target.claimedBy && target.claimedBy !== team.id) {
+        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
+      }
+      if (!target || target.claimed) {
+        target = (grp.slots || []).find(s => !s.claimed);
+      }
+      if (!target) target = (grp.slots || [])[0];
+      if (target) {
+        if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
+          return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
+        }
+        target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
+      }
+    }
+  } else if (roundNum === 3) {
+    const grp = assignments.rounds['3']?.groups?.[group];
+    if (grp) {
+      let target = slotForRiddle || (grp.slots || [])[0];
+      if (target) {
+        if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
+          return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
+        }
+        target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
+      }
     }
   } else if (roundNum === 4) {
-    const target = assignments.rounds['4'].slots.find(s => s.slotId === slot.slotId);
-    if (target) { target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; }
+    const targetSlotIdx = group === 'B' ? 1 : 0;
+    const target = slotForRiddle || (assignments.rounds['4'].slots || [])[targetSlotIdx] || (assignments.rounds['4'].slots || [])[0];
+    if (target) {
+      if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
+        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
+      }
+      target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
+    }
   }
   saveTournamentAssignments(assignments);
 
@@ -875,7 +1011,7 @@ app.post('/api/team/submit', (req, res) => {
   }
   if (!team.roundSolves) team.roundSolves = {};
   team.roundSolves[String(roundNum)] = {
-    slotId: slot.slotId,
+    slotId: claimedSlotId,
     riddleId: riddle.id,
     answer: answer.trim(),
     solvedAt: claimTime,
@@ -902,6 +1038,67 @@ app.post('/api/team/submit', (req, res) => {
   if (roundNum < 4 && !team.unlockedRounds.includes(roundNum + 1)) {
     team.unlockedRounds.push(roundNum + 1);
     team.unlockedRounds.sort((a, b) => a - b);
+  }
+
+  // Dynamic Group Advancement & Auto-Elimination Engine
+  if (roundNum === 2) {
+    team.groupRound3 = group;
+    try {
+      const r3Grp = assignments.rounds['3']?.groups?.[group];
+      if (r3Grp) {
+        if (!Array.isArray(r3Grp.teams)) r3Grp.teams = [];
+        if (!r3Grp.teams.includes(team.id)) r3Grp.teams.push(team.id);
+        saveTournamentAssignments(assignments);
+      }
+    } catch (e) {}
+
+    // Check if this was the 3rd team in group to solve Round 2:
+    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === group && t.roundSolves && t.roundSolves['2']);
+    if (solvedInGroup.length >= 3) {
+      teams.forEach(t => {
+        if (!isAdminTeam(t) && t.groupRound2 === group && (!t.roundSolves || !t.roundSolves['2']) && !t.eliminated) {
+          t.eliminated = true;
+          t.eliminatedRound = 2;
+          t.eliminatedAt = Date.now();
+          t.eliminatedReason = `Walked the Plank in Round 2: Top 3 spots in Group ${group} have been claimed! Your crew was outpaced.`;
+        }
+      });
+    }
+  } else if (roundNum === 3) {
+    // Sync finalist into Round 4 assignments
+    try {
+      if (assignments.rounds['4']) {
+        if (!Array.isArray(assignments.rounds['4'].teams)) assignments.rounds['4'].teams = [];
+        if (!assignments.rounds['4'].teams.includes(team.id)) assignments.rounds['4'].teams.push(team.id);
+        const targetSlotIdx = group === 'B' ? 1 : 0;
+        const r4Slot = (assignments.rounds['4'].slots || [])[targetSlotIdx] || (assignments.rounds['4'].slots || [])[0];
+        if (r4Slot) {
+          if (!Array.isArray(r4Slot.eligibleTeams)) r4Slot.eligibleTeams = [];
+          if (!r4Slot.eligibleTeams.includes(team.id)) r4Slot.eligibleTeams.push(team.id);
+        }
+        saveTournamentAssignments(assignments);
+      }
+    } catch (e) {}
+
+    // Automatically eliminate the other 2 teams in this group
+    teams.forEach(t => {
+      if (!isAdminTeam(t) && (t.groupRound3 || t.groupRound2) === group && t.id !== team.id && !t.eliminated) {
+        t.eliminated = true;
+        t.eliminatedRound = 3;
+        t.eliminatedAt = Date.now();
+        t.eliminatedReason = `Walked the Plank in Round 3: ${team.teamName} claimed the sole finalist spot for Group ${group}!`;
+      }
+    });
+  } else if (roundNum === 4) {
+    // Automatically eliminate runner-up
+    teams.forEach(t => {
+      if (!isAdminTeam(t) && t.id !== team.id && (assignments.rounds['4']?.teams || []).includes(t.id) && !t.eliminated) {
+        t.eliminated = true;
+        t.eliminatedRound = 4;
+        t.eliminatedAt = Date.now();
+        t.eliminatedReason = `Lost Code Championship: ${team.teamName} secured the final treasure first!`;
+      }
+    });
   }
 
   // Next round individual timer initialization:
@@ -931,7 +1128,7 @@ app.post('/api/team/submit', (req, res) => {
   // Real-time broadcasts
   io.emit('tournament:slot_claimed', {
     round: roundNum,
-    slotId: slot.slotId,
+    slotId: claimedSlotId,
     teamId: team.id,
     teamName: team.teamName,
     claimedAt: claimTime
@@ -951,7 +1148,7 @@ app.post('/api/team/submit', (req, res) => {
       : `⚓ Treasure secured! Solved in ${timeFormatted}! Qualification claimed for Round ${roundNum}!`,
     qualified: true,
     isWinner,
-    slotId: slot.slotId,
+    slotId: claimedSlotId,
     solveTime: timeFormatted,
     solveTimeSeconds: finalSolveSec
   });
@@ -1371,6 +1568,53 @@ app.post('/api/admin/assignments/assign-slot', (req, res) => {
     message: `Slot ${slotId} updated.`,
     slotId,
     riddleId: riddleId || null
+  });
+});
+
+app.post('/api/admin/teams/assign-riddle', (req, res) => {
+  if (!isAdminSession(req)) return res.status(403).json({ error: 'Forbidden' });
+  const { teamId, round, riddleId } = req.body || {};
+  if (!teamId || !round || !riddleId) {
+    return res.status(400).json({ error: 'teamId, round, and riddleId are required.' });
+  }
+  const roundNum = parseInt(round, 10);
+  if (!roundNum || roundNum < 1 || roundNum > 4) {
+    return res.status(400).json({ error: 'Invalid round number.' });
+  }
+
+  const targetTeam = teams.find(t => t.id === teamId || (t.teamName && t.teamName.toUpperCase() === teamId.toUpperCase()));
+  if (!targetTeam) {
+    return res.status(404).json({ error: `Team ${teamId} not found.` });
+  }
+
+  const riddleBank = getRiddleBank();
+  if (!riddleBank[riddleId]) {
+    return res.status(404).json({ error: `Riddle ${riddleId} not found in riddle bank.` });
+  }
+
+  if (!targetTeam.allocatedRiddles) targetTeam.allocatedRiddles = {};
+  targetTeam.allocatedRiddles[String(roundNum)] = riddleId;
+
+  try {
+    fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2));
+  } catch (e) {
+    return res.status(500).json({ error: 'Failed to write teams.json' });
+  }
+
+  logAuditEvent({
+    action: 'ADMIN_ASSIGN_TEAM_RIDDLE',
+    admin: req.session.teamName || 'admin',
+    reason: `Assigned riddle ${riddleId} to ${targetTeam.teamName} for Round ${roundNum}`,
+    details: { teamId: targetTeam.id, round: roundNum, riddleId }
+  });
+
+  io.emit('teamsUpdate');
+  io.emit('tournamentUpdate');
+
+  return res.json({
+    success: true,
+    message: `Assigned riddle ${riddleId} to ${targetTeam.teamName} for Round ${roundNum}.`,
+    team: targetTeam
   });
 });
 

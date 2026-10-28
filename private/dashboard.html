@@ -509,10 +509,10 @@
         <div style="display: flex; gap: 10px; align-items: center;">
           <div onclick="event.stopPropagation()" style="display: flex; gap: 8px; align-items: center;">
             <select id="matrixRoundFilter" onchange="renderAssignmentMatrix()" class="admin-select-custom" style="padding: 0.45rem 0.8rem; font-size: 0.8rem;">
-              <option value="1">Round 1 (10 Teams - 10 Riddles)</option>
-              <option value="2">Round 2 (2 Groups of 5 - 3 Slots Each)</option>
-              <option value="3">Round 3 (2 Groups of 3 - 1 Slot Each)</option>
-              <option value="4">Round 4 (Finals - 1 Shared Riddle)</option>
+              <option value="1">Round 1 (10 Teams • 10 Individual Riddles)</option>
+              <option value="2">Round 2 (10 Teams in 2 Groups • 6 Qualifying Slots)</option>
+              <option value="3">Round 3 (6 Semifinalists in 2 Groups • 2 Finalist Berths)</option>
+              <option value="4">Round 4 (2 Finalists • 1v1 Championship Showdown)</option>
             </select>
             <button type="button" onclick="validateRoundModal(document.getElementById('matrixRoundFilter').value)" class="btn-admin-secondary" style="padding: 0.45rem 0.9rem; font-size: 0.8rem;">
               Validate Checklist
@@ -522,15 +522,15 @@
         </div>
       </div>
       <div class="admin-dropdown-body" style="padding: 1.25rem;">
+        <div id="qualifyingSlotsBoardContainer" style="margin-bottom: 1.25rem;"></div>
         <div style="overflow-x: auto;">
           <table class="admin-matrix-table">
             <thead>
               <tr>
                 <th>TEAM</th>
                 <th>GROUP</th>
-                <th>QUALIFYING SLOT</th>
+                <th>QUALIFYING STATUS</th>
                 <th>ASSIGNED RIDDLE</th>
-                <th>STATUS</th>
                 <th>ACTIONS</th>
               </tr>
             </thead>
@@ -2481,112 +2481,292 @@
       });
     }
 
+    function assignTeamRiddle(roundNum, teamId, riddleId) {
+      fetch('/api/admin/teams/assign-riddle', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ round: roundNum, teamId, riddleId })
+      })
+      .then(r => r.json())
+      .then(data => {
+        if (data.error) {
+          showCustomConfirm("Assignment Error", data.error, true, null);
+        } else {
+          showToast(data.message || 'Team riddle assignment updated!');
+          fetchAdminTournamentData();
+          if (typeof fetchTournamentStatus === 'function') fetchTournamentStatus();
+        }
+      })
+      .catch(err => {
+        showCustomConfirm("Error", err.message, true, null);
+      });
+    }
+
     function renderAssignmentMatrix() {
       const tbody = document.getElementById('assignmentMatrixTableBody');
+      const slotsContainer = document.getElementById('qualifyingSlotsBoardContainer');
       if (!tbody) return;
       tbody.innerHTML = '';
+      if (slotsContainer) slotsContainer.innerHTML = '';
 
       const filter = document.getElementById('matrixRoundFilter') ? document.getElementById('matrixRoundFilter').value : '1';
       const rKey = String(filter);
       const roundData = globalAdminAssignments.rounds && globalAdminAssignments.rounds[rKey];
 
       if (!roundData) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">No assignment blueprint configured for Round ${filter}.</td></tr>`;
+        tbody.innerHTML = `<tr><td colspan="5" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">No assignment blueprint configured for Round ${filter}.</td></tr>`;
         return;
       }
 
-      const rows = [];
-      if (filter === '1') {
-        (roundData.slots || []).forEach(slot => {
-          rows.push({
-            teamId: slot.assignedTeamId,
-            group: 'Solo',
-            slotId: slot.slotId,
-            riddleId: slot.riddleId,
-            claimed: slot.claimed,
-            claimedBy: slot.claimedBy
-          });
-        });
-      } else if (filter === '2' || filter === '3') {
-        for (const g of ['A', 'B']) {
-          const grp = roundData.groups && roundData.groups[g];
-          if (grp) {
-            const groupTeams = grp.teams || [];
-            (grp.slots || []).forEach((slot, sIdx) => {
-              const assignedTeam = slot.assignedTeamId || groupTeams[sIdx] || 'Eligible Group ' + g;
-              rows.push({
-                teamId: assignedTeam,
-                group: 'Group ' + g,
-                slotId: slot.slotId,
-                riddleId: slot.riddleId,
-                claimed: slot.claimed,
-                claimedBy: slot.claimedBy
-              });
-            });
-          }
-        }
-      } else if (filter === '4') {
-        (roundData.slots || []).forEach(slot => {
-          rows.push({
-            teamId: slot.assignedTeamId || '2 Finalists',
-            group: 'Final Duel',
-            slotId: slot.slotId,
-            riddleId: slot.riddleId,
-            claimed: slot.claimed,
-            claimedBy: slot.claimedBy
-          });
-        });
-      }
+      const roundRiddles = Object.values(globalAdminRiddles).filter(r => String(r.targetRound) === String(filter));
+      const teamsList = (teamsData || []).filter(t => t.id !== 'team_admin_1' && t.teamName !== 'admin@lostcode');
 
-      if (rows.length === 0) {
-        tbody.innerHTML = `<tr><td colspan="6" style="text-align:center; color:var(--text-secondary); padding: 1.5rem;">No slots configured for this round.</td></tr>`;
-        return;
-      }
-
-      rows.forEach(row => {
-        const teamName = getAdminCrewName(row.teamId);
-
-        // Build interactive riddle selection dropdown
-        const roundRiddles = Object.values(globalAdminRiddles).filter(r => String(r.targetRound) === String(filter));
-        let selectHtml = `<select onchange="assignSlotRiddle(${filter}, '${row.slotId}', this.value)" style="width:100%; max-width:240px; padding:5px 8px; font-size:0.8rem; background:var(--admin-bg-base); border:1px solid var(--admin-border-subtle); color:var(--admin-text-primary); border-radius:3px; font-family:'Rajdhani',sans-serif;">`;
+      // Helper to build riddle select dropdown for slot or team
+      function buildRiddleSelect(currentRiddleId, onchangeStr) {
+        let selectHtml = `<select onchange="${onchangeStr}" style="width:100%; max-width:260px; padding:5px 8px; font-size:0.8rem; background:var(--admin-bg-base); border:1px solid var(--admin-border-subtle); color:var(--admin-text-primary); border-radius:3px; font-family:'Rajdhani',sans-serif;">`;
         selectHtml += `<option value="">-- No Riddle Assigned --</option>`;
-
         let hasCurrentRiddle = false;
         roundRiddles.forEach(r => {
-          const isSelected = (row.riddleId === r.id);
+          const isSelected = (currentRiddleId === r.id);
           if (isSelected) hasCurrentRiddle = true;
           selectHtml += `<option value="${r.id}" ${isSelected ? 'selected' : ''}>${escapeHTML(r.title)} (${escapeHTML(r.id)})</option>`;
         });
-
-        if (row.riddleId && !hasCurrentRiddle) {
-          const ridObj = globalAdminRiddles[row.riddleId];
-          const title = ridObj ? ridObj.title : row.riddleId;
-          selectHtml += `<option value="${row.riddleId}" selected>${escapeHTML(title)} [Other/Draft]</option>`;
+        if (currentRiddleId && !hasCurrentRiddle) {
+          const ridObj = globalAdminRiddles[currentRiddleId];
+          const title = ridObj ? ridObj.title : currentRiddleId;
+          selectHtml += `<option value="${currentRiddleId}" selected>${escapeHTML(title)} [Other/Draft]</option>`;
         }
         selectHtml += `</select>`;
+        return selectHtml;
+      }
 
-        let statusText = '<span style="color:var(--admin-text-secondary); font-family:\'Rajdhani\',sans-serif;">Unclaimed</span>';
-        if (row.claimed) {
-          const claimTeamName = getAdminCrewName(row.claimedBy);
-          statusText = `<span style="color:var(--admin-gold); font-weight:600; font-family:\'Rajdhani\',sans-serif;">Claimed by ${escapeHTML(claimTeamName)}</span>`;
+      if (filter === '1') {
+        if (slotsContainer) {
+          slotsContainer.innerHTML = `
+            <div style="background:rgba(201,154,82,0.08); border:1px solid rgba(201,154,82,0.25); border-radius:4px; padding:0.75rem 1rem; margin-bottom:0.75rem;">
+              <span style="font-family:'Rajdhani',sans-serif; font-size:0.85rem; color:var(--admin-gold); font-weight:600;">
+                ROUND 1 STAGE: All 10 crews participate with 10 individual riddles. Every solving crew advances to Round 2 (0 Eliminations).
+              </span>
+            </div>
+          `;
         }
 
-        const tr = document.createElement('tr');
-        tr.innerHTML = `
-          <td><strong style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif; font-size:0.92rem; font-weight:600;">${escapeHTML(teamName)}</strong></td>
-          <td><span class="badge-group-pill badge-group-a">${escapeHTML(row.group)}</span></td>
-          <td><span style="font-family:'JetBrains Mono',monospace; font-size:0.8rem; color:var(--admin-text-secondary);">${escapeHTML(row.slotId)}</span></td>
-          <td>${selectHtml}</td>
-          <td>${statusText}</td>
-          <td>
-            <div style="display:flex; gap:6px;">
-              <button type="button" onclick="previewTeamChallenge('${row.teamId}', ${filter})" class="btn-table-action">Preview</button>
-              <button type="button" onclick="openOverrideModal(${filter}, '${row.slotId}')" class="btn-table-action">Override</button>
+        (roundData.slots || []).forEach(slot => {
+          const teamId = slot.assignedTeamId;
+          const teamObj = teamsList.find(t => t.id === teamId);
+          const teamName = teamObj ? teamObj.teamName : getAdminCrewName(teamId);
+          const isClaimed = slot.claimed || (teamObj && teamObj.roundSolves && teamObj.roundSolves['1']);
+          const selectHtml = buildRiddleSelect(slot.riddleId, `assignSlotRiddle(1, '${slot.slotId}', this.value)`);
+
+          const statusHtml = isClaimed
+            ? `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">✓ QUALIFIED (${escapeHTML(slot.slotId)})</span>`
+            : `<span style="color:var(--admin-text-secondary); font-family:'Rajdhani',sans-serif;">Slot ${escapeHTML(slot.slotId)} • Open</span>`;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif; font-size:0.92rem; font-weight:600;">${escapeHTML(teamName)}</strong></td>
+            <td><span class="badge-group-pill badge-group-a">Round 1</span></td>
+            <td>${statusHtml}</td>
+            <td>${selectHtml}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button type="button" onclick="previewTeamChallenge('${teamId}', 1)" class="btn-table-action">Preview</button>
+                <button type="button" onclick="openOverrideModal(1, '${slot.slotId}')" class="btn-table-action">Override</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else if (filter === '2') {
+        const grpA = roundData.groups && roundData.groups['A'];
+        const grpB = roundData.groups && roundData.groups['B'];
+
+        // Render Qualifying Slots Board for Round 2
+        if (slotsContainer) {
+          function renderGroupSlotsHtml(groupKey, grpObj) {
+            const slots = (grpObj && grpObj.slots) || [];
+            let html = `<div style="background:var(--admin-bg-surface); border:1px solid var(--admin-border-subtle); border-radius:4px; padding:0.9rem; flex:1; min-width:300px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-family:'Cinzel',serif; color:var(--admin-gold); font-size:0.88rem;">GROUP ${groupKey} QUALIFYING SLOTS (3 SPOTS)</strong>
+                <span class="badge-group-pill ${groupKey === 'A' ? 'badge-group-a' : 'badge-group-b'}">Group ${groupKey}</span>
+              </div>
+              <div style="display:flex; flex-direction:column; gap:6px;">`;
+            slots.forEach((s, idx) => {
+              const isClaimed = !!s.claimed;
+              const claimCrew = s.claimedBy ? getAdminCrewName(s.claimedBy) : '';
+              html += `<div style="display:flex; justify-content:space-between; align-items:center; padding:5px 8px; background:var(--admin-bg-base); border-radius:3px; font-size:0.78rem;">
+                <span style="font-family:'JetBrains Mono',monospace; color:var(--admin-text-secondary);">${escapeHTML(s.slotId)} (${idx + 1}${idx === 0 ? 'st' : (idx === 1 ? 'nd' : 'rd')} Place):</span>
+                ${isClaimed 
+                  ? `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">✓ Claimed by ${escapeHTML(claimCrew)}</span>`
+                  : `<span style="color:var(--admin-text-muted); font-family:'Rajdhani',sans-serif;">⏱ Open Slot (Unclaimed)</span>`}
+              </div>`;
+            });
+            html += `</div></div>`;
+            return html;
+          }
+
+          slotsContainer.innerHTML = `
+            <div style="background:rgba(201,154,82,0.08); border:1px solid rgba(201,154,82,0.25); border-radius:4px; padding:0.75rem 1rem; margin-bottom:0.75rem;">
+              <span style="font-family:'Rajdhani',sans-serif; font-size:0.85rem; color:var(--admin-gold); font-weight:600;">
+                ROUND 2 RULES: All 10 crews enter Round 2 (5 in Group A, 5 in Group B). Each crew solves their allocated riddle. The first 3 crews in each group to submit correct answers claim the 3 qualifying slots and advance to Round 3. Outpaced crews in each group walk the plank!
+              </span>
             </div>
-          </td>
-        `;
-        tbody.appendChild(tr);
-      });
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:0.75rem;">
+              ${renderGroupSlotsHtml('A', grpA)}
+              ${renderGroupSlotsHtml('B', grpB)}
+            </div>
+          `;
+        }
+
+        // Render all 10 teams sorted by Group
+        const sortedTeams = [...teamsList].sort((a, b) => {
+          const grpA = a.groupRound2 || 'A';
+          const grpB = b.groupRound2 || 'A';
+          if (grpA !== grpB) return grpA.localeCompare(grpB);
+          return (a.teamName || '').localeCompare(b.teamName || '');
+        });
+
+        sortedTeams.forEach(team => {
+          const group = team.groupRound2 || 'A';
+          const teamRiddleId = (team.allocatedRiddles && team.allocatedRiddles['2']) || '';
+          const selectHtml = buildRiddleSelect(teamRiddleId, `assignTeamRiddle(2, '${team.id}', this.value)`);
+
+          let statusHtml = '';
+          if (team.roundSolves && team.roundSolves['2']) {
+            const slotId = team.roundSolves['2'].slotId || 'Slot Claimed';
+            statusHtml = `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">✓ QUALIFIED (${escapeHTML(slotId)})</span>`;
+          } else if (team.eliminated && team.eliminatedRound === 2) {
+            statusHtml = `<span style="color:var(--admin-danger); font-weight:700; font-family:'Rajdhani',sans-serif;">ELIMINATED (Plank Walked)</span>`;
+          } else if (team.currentRound >= 2) {
+            statusHtml = `<span style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif;">Active (Competing for Top 3)</span>`;
+          } else {
+            statusHtml = `<span style="color:var(--admin-text-muted); font-family:'Rajdhani',sans-serif;">Awaiting Round 1 Solve</span>`;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif; font-size:0.92rem; font-weight:600;">${escapeHTML(team.teamName)}</strong></td>
+            <td><span class="badge-group-pill ${group === 'A' ? 'badge-group-a' : 'badge-group-b'}">Group ${escapeHTML(group)}</span></td>
+            <td>${statusHtml}</td>
+            <td>${selectHtml}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button type="button" onclick="previewTeamChallenge('${team.id}', 2)" class="btn-table-action">Preview</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else if (filter === '3') {
+        const grpA = roundData.groups && roundData.groups['A'];
+        const grpB = roundData.groups && roundData.groups['B'];
+
+        if (slotsContainer) {
+          function renderFinalistBerthHtml(groupKey, grpObj) {
+            const slot = (grpObj && grpObj.slots && grpObj.slots[0]) || { slotId: `R3_G${groupKey}_S1` };
+            const isClaimed = !!slot.claimed;
+            const claimCrew = slot.claimedBy ? getAdminCrewName(slot.claimedBy) : '';
+            return `<div style="background:var(--admin-bg-surface); border:1px solid var(--admin-border-subtle); border-radius:4px; padding:0.9rem; flex:1; min-width:300px;">
+              <div style="display:flex; justify-content:space-between; align-items:center; margin-bottom:8px;">
+                <strong style="font-family:'Cinzel',serif; color:var(--admin-gold); font-size:0.88rem;">GROUP ${groupKey} FINALIST BERTH</strong>
+                <span class="badge-group-pill ${groupKey === 'A' ? 'badge-group-a' : 'badge-group-b'}">Group ${groupKey}</span>
+              </div>
+              <div style="padding:6px 10px; background:var(--admin-bg-base); border-radius:3px; font-size:0.8rem; display:flex; justify-content:space-between; align-items:center;">
+                <span style="font-family:'JetBrains Mono',monospace; color:var(--admin-text-secondary);">${escapeHTML(slot.slotId)}:</span>
+                ${isClaimed 
+                  ? `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">✓ Finalist: ${escapeHTML(claimCrew)}</span>`
+                  : `<span style="color:var(--admin-text-muted); font-family:'Rajdhani',sans-serif;">⏱ Open (First Solver Wins Berth)</span>`}
+              </div>
+            </div>`;
+          }
+
+          slotsContainer.innerHTML = `
+            <div style="background:rgba(201,154,82,0.08); border:1px solid rgba(201,154,82,0.25); border-radius:4px; padding:0.75rem 1rem; margin-bottom:0.75rem;">
+              <span style="font-family:'Rajdhani',sans-serif; font-size:0.85rem; color:var(--admin-gold); font-weight:600;">
+                ROUND 3 RULES: 6 Semifinalists (3 in Group A, 3 in Group B). The first crew in each group to solve their semifinal riddle claims the Finalist berth and advances to Round 4. The other 4 crews are eliminated!
+              </span>
+            </div>
+            <div style="display:flex; gap:12px; flex-wrap:wrap; margin-bottom:0.75rem;">
+              ${renderFinalistBerthHtml('A', grpA)}
+              ${renderFinalistBerthHtml('B', grpB)}
+            </div>
+          `;
+        }
+
+        // Show Round 3 teams
+        const r3Teams = teamsList.filter(t => (t.currentRound >= 3) || (!t.eliminated && (t.roundSolves && t.roundSolves['2'])));
+        const displayTeams = r3Teams.length > 0 ? r3Teams : teamsList;
+
+        displayTeams.forEach(team => {
+          const group = team.groupRound3 || team.groupRound2 || 'A';
+          const teamRiddleId = (team.allocatedRiddles && team.allocatedRiddles['3']) || (group === 'A' ? 'riddle_r3_g1_1' : 'riddle_r3_g2_1');
+          const selectHtml = buildRiddleSelect(teamRiddleId, `assignTeamRiddle(3, '${team.id}', this.value)`);
+
+          let statusHtml = '';
+          if (team.roundSolves && team.roundSolves['3']) {
+            statusHtml = `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">✓ FINALIST (Round 4 Berth)</span>`;
+          } else if (team.eliminated && team.eliminatedRound === 3) {
+            statusHtml = `<span style="color:var(--admin-danger); font-weight:700; font-family:'Rajdhani',sans-serif;">ELIMINATED (Outpaced)</span>`;
+          } else if (team.currentRound >= 3) {
+            statusHtml = `<span style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif;">Active in Semifinal</span>`;
+          } else {
+            statusHtml = `<span style="color:var(--admin-text-muted); font-family:'Rajdhani',sans-serif;">Awaiting Round 2 Qualifiers</span>`;
+          }
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif; font-size:0.92rem; font-weight:600;">${escapeHTML(team.teamName)}</strong></td>
+            <td><span class="badge-group-pill ${group === 'A' ? 'badge-group-a' : 'badge-group-b'}">Group ${escapeHTML(group)}</span></td>
+            <td>${statusHtml}</td>
+            <td>${selectHtml}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button type="button" onclick="previewTeamChallenge('${team.id}', 3)" class="btn-table-action">Preview</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      } else if (filter === '4') {
+        if (slotsContainer) {
+          const winnerId = globalAdminRoundState['4']?.winner;
+          const winnerName = winnerId ? getAdminCrewName(winnerId) : null;
+          slotsContainer.innerHTML = `
+            <div style="background:rgba(201,154,82,0.08); border:1px solid rgba(201,154,82,0.25); border-radius:4px; padding:0.75rem 1rem; margin-bottom:0.75rem;">
+              <span style="font-family:'Rajdhani',sans-serif; font-size:0.85rem; color:var(--admin-gold); font-weight:600;">
+                ROUND 4 CHAMPIONSHIP: 1v1 Final Showdown between Group A Finalist and Group B Finalist. First crew to solve wins the Lost Code Grand Championship!
+              </span>
+              ${winnerName ? `<div style="margin-top:6px; font-size:0.9rem; color:var(--admin-gold); font-weight:700;">🏆 TOURNAMENT WINNER: ${escapeHTML(winnerName)}</div>` : ''}
+            </div>
+          `;
+        }
+
+        (roundData.slots || []).forEach((slot, sIdx) => {
+          const trackName = sIdx === 0 ? 'Section 1 (Group A Champion)' : 'Section 2 (Group B Champion)';
+          const isClaimed = !!slot.claimed;
+          const claimedCrew = slot.claimedBy ? getAdminCrewName(slot.claimedBy) : '';
+          const selectHtml = buildRiddleSelect(slot.riddleId, `assignSlotRiddle(4, '${slot.slotId}', this.value)`);
+
+          const statusHtml = isClaimed
+            ? `<span style="color:var(--admin-gold); font-weight:700; font-family:'Rajdhani',sans-serif;">🏆 GRAND CHAMPION (${escapeHTML(claimedCrew)})</span>`
+            : `<span style="color:var(--admin-text-secondary); font-family:'Rajdhani',sans-serif;">Championship Slot • Live</span>`;
+
+          const tr = document.createElement('tr');
+          tr.innerHTML = `
+            <td><strong style="color:var(--admin-text-primary); font-family:'Rajdhani',sans-serif; font-size:0.92rem; font-weight:600;">${escapeHTML(slot.claimedBy ? claimedCrew : trackName)}</strong></td>
+            <td><span class="badge-group-pill badge-group-a">${escapeHTML(slot.slotId)}</span></td>
+            <td>${statusHtml}</td>
+            <td>${selectHtml}</td>
+            <td>
+              <div style="display:flex; gap:6px;">
+                <button type="button" onclick="previewTeamChallenge('${slot.claimedBy || 'crew_1_buccaneers'}', 4)" class="btn-table-action">Preview</button>
+                <button type="button" onclick="openOverrideModal(4, '${slot.slotId}')" class="btn-table-action">Override</button>
+              </div>
+            </td>
+          `;
+          tbody.appendChild(tr);
+        });
+      }
     }
 
     function getAdminCrewName(teamId) {

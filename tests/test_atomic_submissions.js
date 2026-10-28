@@ -59,23 +59,31 @@ async function runTests() {
     roundState['2'].eliminations = [];
     saveRoundState(roundState);
 
+    // Clean state for test scenario across teams
+    teams.forEach(t => {
+      t.disqualified = false;
+      t.eliminated = false;
+      delete t.disqualifiedReason;
+      delete t.eliminatedRound;
+      delete t.eliminatedReason;
+      delete t.eliminatedAt;
+      if (t.roundSolves) {
+        delete t.roundSolves['2'];
+        delete t.roundSolves['3'];
+        delete t.roundSolves['4'];
+      }
+      if (t.roundTimers) {
+        delete t.roundTimers['2'];
+        delete t.roundTimers['3'];
+        delete t.roundTimers['4'];
+      }
+    });
+
     // Set test crews currentRound to 2 for Round 2 competition
     const bucMem = teams.find(t => t.id === 'crew_1_buccaneers');
-    if (bucMem) {
-      bucMem.currentRound = 2;
-      bucMem.disqualified = false;
-      delete bucMem.disqualifiedReason;
-      if (bucMem.roundSolves) delete bucMem.roundSolves['2'];
-      if (bucMem.roundTimers) delete bucMem.roundTimers['2'];
-    }
+    if (bucMem) bucMem.currentRound = 2;
     const corMem = teams.find(t => t.id === 'crew_3_corsairs');
-    if (corMem) {
-      corMem.currentRound = 2;
-      corMem.disqualified = false;
-      delete corMem.disqualifiedReason;
-      if (corMem.roundSolves) delete corMem.roundSolves['2'];
-      if (corMem.roundTimers) delete corMem.roundTimers['2'];
-    }
+    if (corMem) corMem.currentRound = 2;
 
     const creds = getCredentials();
     const bucPass = creds.teams.BUCCANEERS || creds.teams.buccaneers;
@@ -165,9 +173,15 @@ async function runTests() {
 
     const rs4 = getRoundState();
     rs4['4'].status = 'Live';
+    rs4['4'].qualifiers = [];
+    delete rs4['4'].winner;
     saveRoundState(rs4);
 
-    if (bucMem) bucMem.currentRound = 4;
+    if (bucMem) {
+      bucMem.currentRound = 4;
+      if (bucMem.roundSolves) delete bucMem.roundSolves['4'];
+      if (bucMem.roundTimers) delete bucMem.roundTimers['4'];
+    }
 
     const finalSub = await fetch(`${baseUrl}/api/team/submit`, {
       method: 'POST',
