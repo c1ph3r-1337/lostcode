@@ -663,36 +663,35 @@ app.get('/api/team/challenge', (req, res) => {
 
   const timerInfo = getTeamRoundTimer(team, String(roundNum));
 
-  // If already solved, return completed view with solved answer regardless of whether round is still Live
-  if (isAlreadySolved) {
-    const rawRiddle = slot && slot.riddleId ? getRiddleBank()[slot.riddleId] : null;
-    const isHintUnlocked = rawRiddle && !!(team.hintsUnlocked && (team.hintsUnlocked[rawRiddle.id] || (rawRiddle.category && team.hintsUnlocked[rawRiddle.category])));
-    const unlockedRecord = rawRiddle && team.hintsUnlocked ? (team.hintsUnlocked[rawRiddle.id] || (rawRiddle.category && team.hintsUnlocked[rawRiddle.category])) : null;
-    const rawHintText = rawRiddle && ((Array.isArray(rawRiddle.hints) && rawRiddle.hints[0] && rawRiddle.hints[0].text) ? rawRiddle.hints[0].text : (rawRiddle.hint || `Intel clue for ${rawRiddle.title}`));
-    const sanitized = rawRiddle ? {
-      id: rawRiddle.id,
-      title: rawRiddle.title,
-      text: rawRiddle.text,
-      hasHint: true,
-      hintUnlocked: isHintUnlocked,
-      hintPenaltyMinutes: unlockedRecord && unlockedRecord.penaltyMinutes ? unlockedRecord.penaltyMinutes : null,
-      hint: isHintUnlocked ? rawHintText : null,
-      points: 0
-    } : { id: 'solved', title: 'Riddle Completed', text: 'Bounty secured by your crew!', hasHint: false };
+  const roundTitles = {
+    1: 'Round 1: Setting Sail',
+    2: 'Round 2: High Seas',
+    3: "Round 3: Dead Man's Creek",
+    4: 'Round 4: Treasure Island'
+  };
 
+  // If already solved, return clean completed view with solved answer
+  if (isAlreadySolved) {
     const solvedAns = (typeof solveRecord === 'object' && solveRecord?.answer) ? solveRecord.answer : 'Flag Salvaged';
     return res.json({
       success: true,
       round: roundNum,
-      slotId: slot ? slot.slotId : null,
-      riddle: sanitized,
+      slotId: solveRecord?.slotId || null,
+      riddle: {
+        id: `island_r${roundNum}`,
+        title: roundTitles[roundNum] || `Round ${roundNum} Island`,
+        text: 'Physical relic salvaged! Your crew has secured this island and claimed the bounty.',
+        hasHint: false,
+        hint: null,
+        hintUnlocked: false
+      },
       roundStatus,
       isSolved: true,
       isQualified: true,
       isClaimed: true,
       solvedAnswer: solvedAns,
       timer: timerInfo,
-      message: 'Your crew has successfully completed this riddle!'
+      message: 'Island cleared! Your crew has claimed this island\'s treasure.'
     });
   }
 
@@ -709,79 +708,28 @@ app.get('/api/team/challenge', (req, res) => {
     });
   }
 
-  if (!slot || !slot.riddleId) {
-    return res.json({
-      success: true,
-      round: roundNum,
-      slotId: slot ? slot.slotId : null,
-      roundStatus,
-      isEliminated: false,
-      isQualified: false,
-      timer: timerInfo,
-      message: 'The Admiralty has not yet charted a riddle for your crew in this round.',
-      riddle: null
-    });
-  }
-
-  const riddleBank = getRiddleBank();
-  const rawRiddle = riddleBank[slot.riddleId];
-
-  if (!rawRiddle || rawRiddle.status !== 'published') {
-    return res.json({
-      success: true,
-      round: roundNum,
-      slotId: slot.slotId,
-      roundStatus,
-      isEliminated: false,
-      isQualified: false,
-      timer: timerInfo,
-      message: 'Riddle configuration is in draft state by the Admiralty.',
-      riddle: null
-    });
-  }
-
-  const isHintUnlocked = !!(team.hintsUnlocked && (team.hintsUnlocked[rawRiddle.id] || (rawRiddle.category && team.hintsUnlocked[rawRiddle.category])));
-  const unlockedRecord = team.hintsUnlocked ? (team.hintsUnlocked[rawRiddle.id] || (rawRiddle.category && team.hintsUnlocked[rawRiddle.category])) : null;
-  const rawHintText = (Array.isArray(rawRiddle.hints) && rawRiddle.hints[0] && rawRiddle.hints[0].text) 
-    ? rawRiddle.hints[0].text 
-    : (rawRiddle.hint || `Intel clue for ${rawRiddle.title}`);
-
-  const currentHintsCount = (team.hintsUnlocked && typeof team.hintsUnlocked === 'object') ? Object.keys(team.hintsUnlocked).length : 0;
-  const nextHintCostMinutes = (currentHintsCount + 1) * 5;
-
-  // Sanitize riddle: NEVER leak expectedAnswer, normalizedAnswer, or matching rules
-  const sanitizedRiddle = {
-    id: rawRiddle.id,
-    title: rawRiddle.title,
-    text: rawRiddle.text,
-    category: rawRiddle.category || rawRiddle.id,
-    hasHint: true,
-    hintUnlocked: isHintUnlocked,
-    hintPenaltyMinutes: unlockedRecord && unlockedRecord.penaltyMinutes ? unlockedRecord.penaltyMinutes : null,
-    hint: isHintUnlocked ? rawHintText : null,
-    nextHintCost: nextHintCostMinutes,
-    hints: [
-      {
-        text: isHintUnlocked ? rawHintText : 'Hint locked by Admiralty Quartermaster.',
-        cost: nextHintCostMinutes,
-        unlocked: isHintUnlocked
-      }
-    ]
+  // Atmospheric island station placeholder for participants (No clue/riddle leaks)
+  const participantIslandRiddle = {
+    id: slot?.riddleId || `island_r${roundNum}`,
+    title: roundTitles[roundNum] || `Island ${roundNum}`,
+    text: 'The physical realm holds the salvaged secrets of this island. Search the venue coordinates for hidden chits, decode the paper clues, and submit your retrieved password below.',
+    hasHint: false,
+    hint: null,
+    hintUnlocked: false,
+    points: 100
   };
 
   return res.json({
     success: true,
     round: roundNum,
-    slotId: slot.slotId,
-    groupId: slot.groupId || null,
-    riddle: sanitizedRiddle,
+    slotId: slot ? slot.slotId : null,
+    riddle: participantIslandRiddle,
     roundStatus,
     timer: timerInfo,
-    isClaimed: !!slot.claimed,
-    claimedBy: slot.claimedBy || null,
-    claimedAt: slot.claimedAt || null,
+    isClaimed: false,
     isQualified: false,
-    isEliminated: false
+    isEliminated: false,
+    message: 'Explore the venue coordinates and enter the salvaged flag to claim this island.'
   });
 });
 
@@ -893,88 +841,57 @@ app.post('/api/team/submit', (req, res) => {
 
   const assignments = getTournamentAssignments();
   const group = (roundNum >= 3 ? team.groupRound3 : team.groupRound2) || 'A';
-  const slot = findTeamSlotInRound(assignments, roundNum, team.id);
   const riddleBank = getRiddleBank();
 
-  // If in Round 2, check if group is already full (3 qualifiers claimed)
-  if (roundNum === 2) {
-    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === group && t.roundSolves && t.roundSolves['2']);
-    if (solvedInGroup.length >= 3) {
+  // 1. Funnel Capacity Checks
+  if (roundNum === 1) {
+    const r1Solvers = teams.filter(t => !isAdminTeam(t) && t.roundSolves && t.roundSolves['1']);
+    if (r1Solvers.length >= 6) {
+      team.eliminated = true;
+      team.eliminatedRound = 1;
+      team.eliminatedAt = Date.now();
+      team.eliminatedReason = 'Walked the Plank in Round 1: All 6 qualifying spots for Round 2 have already been claimed! Your crew was outpaced.';
+      try { fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2)); } catch (e) {}
+      io.emit('teamsUpdate');
+      io.emit('tournamentUpdate');
+      return res.json({
+        success: false,
+        message: 'Treasure claimed! All 6 qualifying spots for Round 2 have already been claimed! Your crew was outpaced and has Walked the Plank.',
+        qualified: false,
+        eliminated: true
+      });
+    }
+  } else if (roundNum === 2) {
+    const r2Solvers = teams.filter(t => !isAdminTeam(t) && t.roundSolves && t.roundSolves['2']);
+    if (r2Solvers.length >= 2) {
       team.eliminated = true;
       team.eliminatedRound = 2;
       team.eliminatedAt = Date.now();
-      team.eliminatedReason = `Walked the Plank in Round 2: Top 3 spots in Group ${group} have already been claimed! Your crew was outpaced.`;
+      team.eliminatedReason = 'Walked the Plank in Round 2: Top 2 qualifying spots for Round 3 have already been claimed! Your crew was outpaced.';
       try { fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2)); } catch (e) {}
       io.emit('teamsUpdate');
       io.emit('tournamentUpdate');
       return res.json({
         success: false,
-        message: `Treasure claimed! All 3 qualifying spots in Group ${group} have already been claimed! Your crew was outpaced and has Walked the Plank.`,
-        qualified: false,
-        eliminated: true
-      });
-    }
-  } else if (roundNum === 3) {
-    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && (t.groupRound3 || t.groupRound2) === group && t.roundSolves && t.roundSolves['3']);
-    if (solvedInGroup.length >= 1) {
-      team.eliminated = true;
-      team.eliminatedRound = 3;
-      team.eliminatedAt = Date.now();
-      team.eliminatedReason = `Walked the Plank in Round 3: Finalist spot for Group ${group} was already claimed!`;
-      try { fs.writeFileSync(teamsFilePath, JSON.stringify(teams, null, 2)); } catch (e) {}
-      io.emit('teamsUpdate');
-      io.emit('tournamentUpdate');
-      return res.json({
-        success: false,
-        message: `Treasure claimed! The finalist spot for Group ${group} has already been claimed! Your crew has Walked the Plank.`,
+        message: 'Treasure claimed! Top 2 qualifying spots for Round 3 have already been claimed! Your crew has Walked the Plank.',
         qualified: false,
         eliminated: true
       });
     }
   }
 
-  // Candidate riddle IDs for this team and round
-  const candidateRiddleIds = [];
-  if (slot && slot.riddleId) candidateRiddleIds.push(slot.riddleId);
-  if (team.allocatedRiddles && team.allocatedRiddles[String(roundNum)]) {
-    const allocId = team.allocatedRiddles[String(roundNum)];
-    if (!candidateRiddleIds.includes(allocId)) candidateRiddleIds.push(allocId);
-  }
-
-  // Also include any slots where this team is specifically eligible or assigned
-  if (roundNum === 2 || roundNum === 3) {
-    const grp = assignments.rounds[String(roundNum)]?.groups?.[group];
-    if (grp && Array.isArray(grp.slots)) {
-      grp.slots.forEach(s => {
-        if (s.riddleId && (s.assignedTeamId === team.id || (Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(team.id)))) {
-          if (!candidateRiddleIds.includes(s.riddleId)) candidateRiddleIds.push(s.riddleId);
-        }
-      });
-    }
-  } else if (roundNum === 4) {
-    const slots = assignments.rounds['4']?.slots || [];
-    slots.forEach(s => {
-      if (s.riddleId && (s.assignedTeamId === team.id || (Array.isArray(s.eligibleTeams) && s.eligibleTeams.includes(team.id)))) {
-        if (!candidateRiddleIds.includes(s.riddleId)) candidateRiddleIds.push(s.riddleId);
-      }
-    });
-  }
-
-  if (candidateRiddleIds.length === 0) {
-    return res.status(400).json({ error: 'No active riddle assigned to your crew in this round.' });
-  }
-
-  // Check answer matching against candidate riddles
-  let riddle = null;
-  for (const rId of candidateRiddleIds) {
-    const rObj = riddleBank[rId];
-    if (rObj && rObj.status === 'published' && checkAnswerMatch(answer, rObj.expectedAnswer, rObj.answerMatchingRule)) {
-      riddle = rObj;
+  // 2. Open Pool Matching for active round:
+  // Any team in this round can submit any valid published password for roundNum
+  const roundPool = Object.values(riddleBank).filter(r => String(r.targetRound) === String(roundNum) && r.status === 'published');
+  let matchedRiddle = null;
+  for (const rObj of roundPool) {
+    if (checkAnswerMatch(answer, rObj.expectedAnswer, rObj.answerMatchingRule)) {
+      matchedRiddle = rObj;
       break;
     }
   }
 
-  if (!riddle) {
+  if (!matchedRiddle) {
     return res.json({
       success: false,
       message: 'Avast! That flag be incorrect. Check your coordinates and try again.',
@@ -982,91 +899,40 @@ app.post('/api/team/submit', (req, res) => {
     });
   }
 
-  // Find if this riddle is associated with a specific slot in the current round
-  let slotForRiddle = null;
-  if (roundNum === 1) {
-    slotForRiddle = (assignments.rounds['1']?.slots || []).find(s => s.riddleId === riddle.id);
-  } else if (roundNum === 2 || roundNum === 3) {
-    const grp = assignments.rounds[String(roundNum)]?.groups?.[group];
-    slotForRiddle = grp && (grp.slots || []).find(s => s.riddleId === riddle.id);
-  } else if (roundNum === 4) {
-    slotForRiddle = (assignments.rounds['4']?.slots || []).find(s => s.riddleId === riddle.id);
-  }
-
-  // If the slot specifically associated with this riddle is already claimed by another crew:
-  if (slotForRiddle && slotForRiddle.claimed && slotForRiddle.claimedBy && slotForRiddle.claimedBy !== team.id) {
+  // 3. Single-Claim Check: Has another crew already claimed this exact password/riddle in this round?
+  const alreadyClaimedTeam = teams.find(t => !isAdminTeam(t) && t.id !== team.id && t.roundSolves && t.roundSolves[String(roundNum)]?.riddleId === matchedRiddle.id);
+  if (alreadyClaimedTeam) {
     return res.json({
       success: false,
-      message: `Treasure claimed! Another crew claimed this slot seconds before ye.`,
+      message: 'Treasure claimed! Another crew claimed this relic seconds before ye. Search for another hidden clue!',
       qualified: false
     });
   }
 
-  // Check atomic slot claim on default slot
-  if (slot && slot.claimed && slot.claimedBy && slot.claimedBy !== team.id) {
-    return res.json({
-      success: false,
-      message: `Treasure claimed! Another crew claimed this slot seconds before ye.`,
-      qualified: false
-    });
-  }
-
-  // Synchronously claim slot
+  // 4. Synchronously claim slot in persistent tournament assignments
   const claimTime = new Date().toISOString();
-  let claimedSlotId = slot ? slot.slotId : `R${roundNum}_S_CLAIMED`;
+  let claimedSlotId = `R${roundNum}_S_CLAIMED`;
 
-  // Persist into assignments blueprint
+  let targetSlot = null;
   if (roundNum === 1) {
-    const target = (assignments.rounds['1'].slots || []).find(s => (slot && s.slotId === slot.slotId) || s.assignedTeamId === team.id || s.riddleId === riddle.id);
-    if (target) {
-      if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
-        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
-      }
-      target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
-    }
+    targetSlot = (assignments.rounds['1']?.slots || []).find(s => s.riddleId === matchedRiddle.id);
   } else if (roundNum === 2) {
-    const grp = assignments.rounds['2']?.groups?.[group];
-    if (grp) {
-      let target = null;
-      if (slotForRiddle) {
-        target = slotForRiddle;
-      } else if (slot && slot.slotId) {
-        target = (grp.slots || []).find(s => s.slotId === slot.slotId);
-      }
-      if (target && target.claimed && target.claimedBy && target.claimedBy !== team.id) {
-        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
-      }
-      if (!target || target.claimed) {
-        target = (grp.slots || []).find(s => !s.claimed);
-      }
-      if (!target) target = (grp.slots || [])[0];
-      if (target) {
-        if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
-          return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
-        }
-        target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
-      }
-    }
+    targetSlot = (assignments.rounds['2']?.slots || []).find(s => s.riddleId === matchedRiddle.id)
+      || (assignments.rounds['2']?.groups?.A?.slots || []).find(s => s.riddleId === matchedRiddle.id)
+      || (assignments.rounds['2']?.groups?.B?.slots || []).find(s => s.riddleId === matchedRiddle.id);
   } else if (roundNum === 3) {
-    const grp = assignments.rounds['3']?.groups?.[group];
-    if (grp) {
-      let target = slotForRiddle || (grp.slots || [])[0];
-      if (target) {
-        if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
-          return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
-        }
-        target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
-      }
-    }
+    targetSlot = (assignments.rounds['3']?.slots || []).find(s => s.riddleId === matchedRiddle.id)
+      || (assignments.rounds['3']?.groups?.A?.slots || []).find(s => s.riddleId === matchedRiddle.id)
+      || (assignments.rounds['3']?.groups?.B?.slots || []).find(s => s.riddleId === matchedRiddle.id);
   } else if (roundNum === 4) {
-    const targetSlotIdx = group === 'B' ? 1 : 0;
-    const target = slotForRiddle || (assignments.rounds['4'].slots || [])[targetSlotIdx] || (assignments.rounds['4'].slots || [])[0];
-    if (target) {
-      if (target.claimed && target.claimedBy && target.claimedBy !== team.id) {
-        return res.json({ success: false, message: `Treasure claimed! Another crew claimed this slot seconds before ye.`, qualified: false });
-      }
-      target.claimed = true; target.claimedBy = team.id; target.claimedAt = claimTime; claimedSlotId = target.slotId;
-    }
+    targetSlot = (assignments.rounds['4']?.slots || []).find(s => s.riddleId === matchedRiddle.id);
+  }
+
+  if (targetSlot) {
+    targetSlot.claimed = true;
+    targetSlot.claimedBy = team.id;
+    targetSlot.claimedAt = claimTime;
+    claimedSlotId = targetSlot.slotId;
   }
   saveTournamentAssignments(assignments);
 
@@ -1103,20 +969,20 @@ app.post('/api/team/submit', (req, res) => {
   }
 
   if (!Array.isArray(team.solvedChallenges)) team.solvedChallenges = [];
-  if (!team.solvedChallenges.includes(riddle.id)) {
-    team.solvedChallenges.push(riddle.id);
+  if (!team.solvedChallenges.includes(matchedRiddle.id)) {
+    team.solvedChallenges.push(matchedRiddle.id);
   }
   if (!team.roundSolves) team.roundSolves = {};
   team.roundSolves[String(roundNum)] = {
     slotId: claimedSlotId,
-    riddleId: riddle.id,
-    answer: answer.trim(),
+    riddleId: matchedRiddle.id,
+    answer: matchedRiddle.expectedAnswer,
     solvedAt: claimTime,
     completed: true,
     solveTimeSeconds: team.roundTimers[String(roundNum)]?.finalSolveSeconds || null
   };
 
-  const pointsEarned = (typeof riddle.points === 'number' && !isNaN(riddle.points)) ? riddle.points : 100;
+  const pointsEarned = (typeof matchedRiddle.points === 'number' && !isNaN(matchedRiddle.points)) ? matchedRiddle.points : 100;
   team.score = (team.score || 0) + pointsEarned;
   if (!Array.isArray(team.scoreHistory)) {
     team.scoreHistory = [{ timestamp: solveTimestamp - 1000, time: new Date(solveTimestamp - 1000).toLocaleTimeString(), score: team.score - pointsEarned }];
@@ -1137,59 +1003,37 @@ app.post('/api/team/submit', (req, res) => {
     team.unlockedRounds.sort((a, b) => a - b);
   }
 
-  // Dynamic Group Advancement & Auto-Elimination Engine
-  if (roundNum === 2) {
-    team.groupRound3 = group;
-    try {
-      const r3Grp = assignments.rounds['3']?.groups?.[group];
-      if (r3Grp) {
-        if (!Array.isArray(r3Grp.teams)) r3Grp.teams = [];
-        if (!r3Grp.teams.includes(team.id)) r3Grp.teams.push(team.id);
-        saveTournamentAssignments(assignments);
-      }
-    } catch (e) {}
-
-    // Check if this was the 3rd team in group to solve Round 2:
-    const solvedInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === group && t.roundSolves && t.roundSolves['2']);
-    if (solvedInGroup.length >= 3) {
+  // Dynamic Funnel Cutoffs & Auto-Eliminations
+  if (roundNum === 1) {
+    const r1SolversCount = teams.filter(t => !isAdminTeam(t) && t.roundSolves && t.roundSolves['1']).length;
+    if (r1SolversCount >= 6) {
       teams.forEach(t => {
-        if (!isAdminTeam(t) && t.groupRound2 === group && (!t.roundSolves || !t.roundSolves['2']) && !t.eliminated) {
+        if (!isAdminTeam(t) && (!t.roundSolves || !t.roundSolves['1']) && !t.eliminated) {
+          t.eliminated = true;
+          t.eliminatedRound = 1;
+          t.eliminatedAt = Date.now();
+          t.eliminatedReason = 'Walked the Plank in Round 1: Top 6 spots for Round 2 have been claimed! Your crew was outpaced.';
+        }
+      });
+    }
+  } else if (roundNum === 2) {
+    const r2SolversCount = teams.filter(t => !isAdminTeam(t) && t.roundSolves && t.roundSolves['2']).length;
+    if (r2SolversCount >= 2) {
+      teams.forEach(t => {
+        if (!isAdminTeam(t) && t.currentRound === 2 && (!t.roundSolves || !t.roundSolves['2']) && !t.eliminated) {
           t.eliminated = true;
           t.eliminatedRound = 2;
           t.eliminatedAt = Date.now();
-          t.eliminatedReason = `Walked the Plank in Round 2: Top 3 spots in Group ${group} have been claimed! Your crew was outpaced.`;
+          t.eliminatedReason = 'Walked the Plank in Round 2: Top 2 spots for Round 3 Semifinals have been claimed! Your crew was outpaced.';
         }
       });
     }
   } else if (roundNum === 3) {
-    // Sync finalist into Round 4 assignments
-    try {
-      if (assignments.rounds['4']) {
-        if (!Array.isArray(assignments.rounds['4'].teams)) assignments.rounds['4'].teams = [];
-        if (!assignments.rounds['4'].teams.includes(team.id)) assignments.rounds['4'].teams.push(team.id);
-        const targetSlotIdx = group === 'B' ? 1 : 0;
-        const r4Slot = (assignments.rounds['4'].slots || [])[targetSlotIdx] || (assignments.rounds['4'].slots || [])[0];
-        if (r4Slot) {
-          if (!Array.isArray(r4Slot.eligibleTeams)) r4Slot.eligibleTeams = [];
-          if (!r4Slot.eligibleTeams.includes(team.id)) r4Slot.eligibleTeams.push(team.id);
-        }
-        saveTournamentAssignments(assignments);
-      }
-    } catch (e) {}
-
-    // Automatically eliminate the other 2 teams in this group
-    teams.forEach(t => {
-      if (!isAdminTeam(t) && (t.groupRound3 || t.groupRound2) === group && t.id !== team.id && !t.eliminated) {
-        t.eliminated = true;
-        t.eliminatedRound = 3;
-        t.eliminatedAt = Date.now();
-        t.eliminatedReason = `Walked the Plank in Round 3: ${team.teamName} claimed the sole finalist spot for Group ${group}!`;
-      }
-    });
+    // Both semifinalists advance to Round 4 upon solving
   } else if (roundNum === 4) {
     // Automatically eliminate runner-up
     teams.forEach(t => {
-      if (!isAdminTeam(t) && t.id !== team.id && (assignments.rounds['4']?.teams || []).includes(t.id) && !t.eliminated) {
+      if (!isAdminTeam(t) && t.id !== team.id && !t.eliminated) {
         t.eliminated = true;
         t.eliminatedRound = 4;
         t.eliminatedAt = Date.now();
@@ -1490,13 +1334,22 @@ function validateRoundConfiguration(roundNum) {
         errors.push(`Group ${g} definition is missing in Round 2.`);
         continue;
       }
-      const teams = grp.teams || [];
-      if (teams.length !== 5) {
-        errors.push(`Round 2 Group ${g} must contain exactly 5 crews (currently ${teams.length}).`);
+      const grpTeams = grp.teams || [];
+      const r1QualifiersInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === g && t.roundSolves && t.roundSolves['1']);
+      if (grpTeams.length === 0 && r1QualifiersInGroup.length > 0) {
+        grp.teams = r1QualifiersInGroup.map(t => t.id).slice(0, 3);
+      }
+
+      if (grpTeams.length !== 3) {
+        if (grpTeams.length === 0) {
+          warnings.push(`Round 2 Group ${g} awaiting Round 1 qualifiers (will auto-populate from top 6 solvers).`);
+        } else {
+          warnings.push(`Round 2 Group ${g} contains ${grpTeams.length} crews.`);
+        }
       }
       const slots = grp.slots || [];
-      if (slots.length !== 3) {
-        errors.push(`Round 2 Group ${g} must have exactly 3 qualifying slots (found ${slots.length}).`);
+      if (slots.length === 0) {
+        errors.push(`Round 2 Group ${g} must have qualifying slots.`);
       }
       slots.forEach((s, idx) => {
         if (!s.riddleId) {
@@ -1518,34 +1371,29 @@ function validateRoundConfiguration(roundNum) {
         continue;
       }
       let teamsInGrp = grp.teams || [];
-      const r2QualifiersInGroup = teams.filter(t => !isAdminTeam(t) && t.groupRound2 === g && t.roundSolves && t.roundSolves[2]);
+      const r2QualifiersInGroup = teams.filter(t => !isAdminTeam(t) && (t.groupRound3 || t.groupRound2) === g && t.roundSolves && t.roundSolves['2']);
       if (teamsInGrp.length === 0 && r2QualifiersInGroup.length > 0) {
-        teamsInGrp = r2QualifiersInGroup.map(t => t.id).slice(0, 3);
+        teamsInGrp = r2QualifiersInGroup.map(t => t.id).slice(0, 1);
         grp.teams = teamsInGrp;
       }
 
-      if (teamsInGrp.length !== 3) {
-        if (r2QualifiersInGroup.length < 3 && teamsInGrp.length === 0) {
-          warnings.push(`Round 3 Group ${g} awaiting Round 2 qualifiers (will auto-populate from top 3).`);
-        } else {
-          errors.push(`Round 3 Group ${g} must contain exactly 3 crews (currently ${teamsInGrp.length}).`);
-        }
+      if (teamsInGrp.length === 0) {
+        warnings.push(`Round 3 Group ${g} awaiting Round 2 qualifiers (will auto-populate from top 2 solvers).`);
       }
       const slots = grp.slots || [];
-      if (slots.length !== 1) {
-        errors.push(`Round 3 Group ${g} must have exactly 1 qualifying slot (found ${slots.length}).`);
+      if (slots.length === 0) {
+        errors.push(`Round 3 Group ${g} must have qualifying slots.`);
       }
-      if (slots[0]) {
-        const s = slots[0];
+      slots.forEach((s, idx) => {
         if (!s.riddleId) {
-          errors.push(`Group ${g} Slot ${s.slotId} has no riddle assigned.`);
+          errors.push(`Group ${g} Slot ${s.slotId || idx + 1} has no riddle assigned.`);
         } else {
           const riddle = riddleBank[s.riddleId];
           if (!riddle || riddle.status !== 'published' || !riddle.expectedAnswer) {
             errors.push(`Group ${g} Slot ${s.slotId} riddle is missing or in Draft state.`);
           }
         }
-      }
+      });
     }
   } else if (roundNum === 4) {
     const slots = roundData.slots || [];
@@ -2214,6 +2062,10 @@ app.post('/api/admin/submissions/clear', (req, res) => {
       team.eliminated = false;
       team.eliminatedRound = null;
       team.eliminatedReason = null;
+      team.disqualified = false;
+      team.disqualifiedAt = null;
+      team.disqualifiedReason = null;
+      team.violations = 0;
       team.isWinner = false;
       delete team.wonAt;
 

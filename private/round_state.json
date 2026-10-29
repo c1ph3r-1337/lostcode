@@ -1,7 +1,7 @@
 {
   "1": {
-    "status": "Draft",
-    "startedAt": null,
+    "status": "Live",
+    "startedAt": "2026-10-29T06:31:50.624Z",
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
@@ -27,8 +27,8 @@
     "status": "Locked",
     "startedAt": null,
     "completedAt": null,
-    "eliminated": [],
     "qualifiers": [],
+    "eliminated": [],
     "eliminations": []
   }
 }

@@ -9,7 +9,8 @@
     "points": 100,
     "text": "Decode the 4-byte binary signal to identify the sentinel, evaluate the four logic gates, and apply the calculated Caesar shift to reveal the deck coordinates.",
     "hint": "Arrr! Decode the binary first to name the sentinel, then use the logic gate outputs to calculate the Caesar shift and decrypt the final location clue.",
-    "hash": "$2b$10$fbsbuNTt7D3hRRpbQnp/o.Uuqb604s7bhafYL3sR6N1reD3UkCzGO"
+    "hash": "$2b$10$fbsbuNTt7D3hRRpbQnp/o.Uuqb604s7bhafYL3sR6N1reD3UkCzGO",
+    "solves": 0
   },
   "riddle_r1_2": {
     "round": 1,
@@ -21,7 +22,8 @@
     "points": 100,
     "text": "Evaluate the zero-indexed Java array calculation to discover the two laboratory numbers, then find the aerial tower broadcasting unseen signals.",
     "hint": "Remember that Java arrays use zero-based indexing. Look up between the labs for the tower with no sails that broadcasts unseen waves.",
-    "hash": "$2b$10$sLGLHMD/ASlsZ8tUR6cWnewy.z55fX6/rQmhdgxW6fqv.kW6Lxeu."
+    "hash": "$2b$10$sLGLHMD/ASlsZ8tUR6cWnewy.z55fX6/rQmhdgxW6fqv.kW6Lxeu.",
+    "solves": 0
   },
   "riddle_r1_3": {
     "round": 1,
@@ -33,7 +35,8 @@
     "points": 100,
     "text": "Reverse the three-place Caesar shift and decode the ASCII bytes to locate the laboratory zone displaying the chemistry legend.",
     "hint": "Shift each letter three places backward, then decode the binary using ASCII. Look for the screen with the famous scientist/chemistry legend in the lab.",
-    "hash": "$2b$10$YDc0EADpWSvtJOdDNMhvhuroT.hEjY32Pxc2SWJLkQDJk.7mxqOEG"
+    "hash": "$2b$10$YDc0EADpWSvtJOdDNMhvhuroT.hEjY32Pxc2SWJLkQDJk.7mxqOEG",
+    "solves": 0
   },
   "riddle_r1_4": {
     "round": 1,
@@ -45,7 +48,8 @@
     "points": 100,
     "text": "Translate the 4-byte binary transmission, solve the IPv4 cryptographic lock to determine the Caesar shift, and trace the passage carrying visual signals.",
     "hint": "Think of the cable that carries video and audio from a computer to a display. Check the corridor outside the lab following seven.",
-    "hash": "$2b$10$0bkm8jpTypxknxn1gon9S.z5hjgeMFz3U0iYDkSqzDuh63F1Fcn.W"
+    "hash": "$2b$10$0bkm8jpTypxknxn1gon9S.z5hjgeMFz3U0iYDkSqzDuh63F1Fcn.W",
+    "solves": 0
   },
   "riddle_r1_5": {
     "round": 1,
@@ -57,7 +61,8 @@
     "points": 100,
     "text": "Decode the binary machine whisper, calculate the IPv4 Caesar shift, and search beneath the six-faced object where fortune rolls.",
     "hint": "Decode the binary, calculate the Caesar shift, and connect the clues to a game of chance. Look underneath where fortune rolls!",
-    "hash": "$2b$10$gZLI9Zk5OPrK0TR./nagYu.535.46LO.26DM3cDcjzDxPcOFlOJ7G"
+    "hash": "$2b$10$gZLI9Zk5OPrK0TR./nagYu.535.46LO.26DM3cDcjzDxPcOFlOJ7G",
+    "solves": 0
   },
   "riddle_r1_6": {
     "round": 1,
@@ -69,7 +74,8 @@
     "points": 100,
     "text": "Unlock the 4-byte XOR cipher using the alphabet's 21st letter to find your room, then look beyond the glass to identify the tricolour banner's maker.",
     "hint": "Arrr, let XOR unlock the door, then let ASCII reveal what you’re searching for. Once you reach your numbered quarters, look beyond the glass—not every treasure lies ashore! Find the tricolour, and seek the name of the mind who gave it its form.",
-    "hash": "$2b$10$XB8nQcq66FItbbclzuTGiOvMlD7KLRD6vVVyfyHLxQyqbmN88R4tu"
+    "hash": "$2b$10$XB8nQcq66FItbbclzuTGiOvMlD7KLRD6vVVyfyHLxQyqbmN88R4tu",
+    "solves": 0
   },
   "riddle_r1_7": {
     "round": 1,
@@ -81,7 +87,8 @@
     "points": 100,
     "text": "Decode the threshold's ASCII bytes to navigate to the chamber, then locate the framed charter surface that speaks of the voyage ahead and institutional dreams.",
     "hint": "Arrr, the Captain’s code has already revealed the way! Seek the place where a room’s number guides your feet, then search for a display that speaks not in words alone, but in the dreams and direction of your crew.",
-    "hash": "$2b$10$Rofp0/ZApyAU5HR59vE1L.17CirZczCl715AjhRxwhx7A9P24bJ5e"
+    "hash": "$2b$10$Rofp0/ZApyAU5HR59vE1L.17CirZczCl715AjhRxwhx7A9P24bJ5e",
+    "solves": 0
   },
   "riddle_r1_8": {
     "round": 1,
@@ -93,7 +100,8 @@
     "points": 100,
     "text": "Follow the rhyming clues of six steps and eight points to discover the Indian standards quality seal on the safety guardian.",
     "hint": "Arrr, mateys! Seek the guardian that stands ready when danger draws near. Look for the seal of Indian standards that marks a product as tested and trusted—but keep your eyes on the sixth deck, and never enter a restricted shaft to claim your prize!",
-    "hash": "$2b$10$88ABjR032HEci8IA30rMqefDMRq5vG/Pft/ET4Hd5pEdxD6bBXYa2"
+    "hash": "$2b$10$88ABjR032HEci8IA30rMqefDMRq5vG/Pft/ET4Hd5pEdxD6bBXYa2",
+    "solves": 0
   },
   "riddle_r1_9": {
     "round": 1,
@@ -105,7 +113,8 @@
     "points": 100,
     "text": "Decode the 5-byte machine name and apply the 4-digit modulo key with a Vigenère cipher to find the silent sentinel above the bustle.",
     "hint": "Arrr, mateys! Decode the five-byte message to uncover the watcher’s name. Then let the digits of the Captain’s key guide your cipher work. Seek the silent eye that records the world near the hall where knowledge is shared—identify it by its number, but touch not the guardian!",
-    "hash": "$2b$10$8SSv/n/WwHfg.Ud4MTwfAe4Ps1toH/WBxNiaCuZVf/H68H3yNQXPm"
+    "hash": "$2b$10$8SSv/n/WwHfg.Ud4MTwfAe4Ps1toH/WBxNiaCuZVf/H68H3yNQXPm",
+    "solves": 0
   },
   "riddle_r1_10": {
     "round": 1,
@@ -117,7 +126,8 @@
     "points": 100,
     "text": "Solve the alchemist's elemental sequence and the physicist's invariant calculation to reveal where messages share a wall and find the scannable pattern.",
     "hint": "Arrr, mateys! The elements reveal the first part, while the unchanging property of light unlocks the shift. When science and code have done their work, seek the place where messages hang in plain sight—but one patterned square holds a secret meant for your device!",
-    "hash": "$2b$10$PDSD7076BIubw3NLXYeZ2uw1I1c3ihl2wl1oUBUPM1m3GaC6WQzYu"
+    "hash": "$2b$10$PDSD7076BIubw3NLXYeZ2uw1I1c3ihl2wl1oUBUPM1m3GaC6WQzYu",
+    "solves": 0
   },
   "riddle_r2_g1_1": {
     "round": 2,
@@ -129,7 +139,8 @@
     "points": 100,
     "text": "Apply Ohm's law to calculate the current from three volts and six ohms, double the discovered value to find your deck, and navigate to where art meets an unexpected conduit opening.",
     "hint": "Arrr, mateys! Let Ohm’s law chart your course: divide the volts by the resistance, then double the current to discover your deck. Seek the artwork of good cheer, and find the conduit opening nearby—the bounty lies beside the sign, not beyond the door!",
-    "hash": "$2b$10$TyFmMg0JW1Y8NY9dGk2Z3On0v2jOj/QhC.1ccvfpvELdFhtzogKS2"
+    "hash": "$2b$10$TyFmMg0JW1Y8NY9dGk2Z3On0v2jOj/QhC.1ccvfpvELdFhtzogKS2",
+    "solves": 0
   },
   "riddle_r2_g1_2": {
     "round": 2,
@@ -141,7 +152,8 @@
     "points": 100,
     "text": "Translate the sea elements' atomic numbers into 8-bit binary and ASCII to discover where knowledge is framed in the classroom corridor.",
     "hint": "Arrr, mateys! The periodic table holds the numbers, but beware—the elements alone won’t spell out your destination. Think carefully about how atomic numbers become binary, and where students’ knowledge is displayed for all to see. Your next clue hangs where lessons meet the open corridor!",
-    "hash": "$2b$10$BXMt/fcnbeoTRvhasQyQMeUWF59e76lB9v7oxTSoXdLvdF2TjYRbS"
+    "hash": "$2b$10$BXMt/fcnbeoTRvhasQyQMeUWF59e76lB9v7oxTSoXdLvdF2TjYRbS",
+    "solves": 0
   },
   "riddle_r2_g1_3": {
     "round": 2,
@@ -153,7 +165,8 @@
     "points": 100,
     "text": "Correct the corrupted first byte of the transmission, follow the path of light toward green giants, and discover the vessel cradled in wood.",
     "hint": "Arrr, mateys! The first byte has betrayed you—trust not the whole message! Decode the remaining letters, then follow the path of light to where green giants take root. Seek the seven proud capitals, and find the vessel that never sails, cradled by a wooden guardian.",
-    "hash": "$2b$10$reZ1vKt0sqOoxopsuESG3eTkRd6SYpoFwF5ZuzvdozLcG5W5AtuJ6"
+    "hash": "$2b$10$reZ1vKt0sqOoxopsuESG3eTkRd6SYpoFwF5ZuzvdozLcG5W5AtuJ6",
+    "solves": 0
   },
   "riddle_r2_g2_1": {
     "round": 2,
@@ -165,7 +178,8 @@
     "points": 100,
     "text": "Analyze the 2D even-parity matrix to locate and repair the corrupted bit, restoring the three-letter department acronym.",
     "hint": "A single bit can betray the entire message. Use even parity to locate the error, correct the binary data, and convert it into ASCII letters to reveal the hidden destination.",
-    "hash": "$2b$10$T8RU/IR3OZjHTgj0/OqQKe7ovpmy.BjBQjQSNsEs/dMpWemShEu6i"
+    "hash": "$2b$10$T8RU/IR3OZjHTgj0/OqQKe7ovpmy.BjBQjQSNsEs/dMpWemShEu6i",
+    "solves": 0
   },
   "riddle_r2_g2_2": {
     "round": 2,
@@ -177,7 +191,8 @@
     "points": 100,
     "text": "Decode the three 8-bit ASCII bytes and locate the silent crimson safety guardian stationed at the confluence of opposing wings.",
     "hint": "Eight bits make a byte, and ASCII gives each byte a voice. Decode the three groups first, then use the words about opposing wings, the midpoint, and a silent safety guardian to discover your destination.",
-    "hash": "$2b$10$7GCUF56TURYeq0cGjdHMs.4T/W8TQ3LDAzOHDvX.ZiYEPXrSpH9zG"
+    "hash": "$2b$10$7GCUF56TURYeq0cGjdHMs.4T/W8TQ3LDAzOHDvX.ZiYEPXrSpH9zG",
+    "solves": 0
   },
   "riddle_r2_g2_3": {
     "round": 2,
@@ -189,7 +204,8 @@
     "points": 100,
     "text": "Calculate the total equivalent resistance of the series-parallel circuit, convert to hexadecimal, and find the giant white landmark on the green.",
     "hint": "Eight bits speak through ASCII, or ohms speak through hex! Calculate the equivalent resistance to find the single hex digit, which is also the first letter of the university’s name. Search for its prominent display on the green.",
-    "hash": "$2b$10$eplep8cV/K8h3W0o8.mKCeJ1xOBR/c2uuPueRR4NNQjtw/O0F2Pg6"
+    "hash": "$2b$10$eplep8cV/K8h3W0o8.mKCeJ1xOBR/c2uuPueRR4NNQjtw/O0F2Pg6",
+    "solves": 0
   },
   "riddle_r3_g1_1": {
     "round": 3,
@@ -201,7 +217,8 @@
     "points": 100,
     "text": "Decode the binary log to identify the department guardian, solve the hardware riddle poem, and locate the mounted circuit relic along the first-floor corridor.",
     "hint": "ASCII reveals the first location. Think of the hardware that connects the processor, memory, and peripherals. Its displayed representation waits along the first-floor laboratory corridor.",
-    "hash": "$2b$10$t4sH0wKf0a9mdkL7wOwqmOxXoxN4AoLXnUaujZCk2X33cOJiDH84K"
+    "hash": "$2b$10$t4sH0wKf0a9mdkL7wOwqmOxXoxN4AoLXnUaujZCk2X33cOJiDH84K",
+    "solves": 0
   },
   "riddle_r3_g2_1": {
     "round": 3,
@@ -213,7 +230,8 @@
     "points": 100,
     "text": "Translate the binary level coordinates, compute the glass refraction paradox binary 1s, and apply the combined Caesar shift to decrypt the final storage landmark.",
     "hint": "ASCII reveals the level. The frequency of light does not change when it enters glass. Convert the calculated percentage to 8-bit binary, count its 1s, and use the combined total to reverse the Caesar cipher. Your final clue concerns a structure near the last laboratory's window.",
-    "hash": "$2b$10$VsGnidSYYH9M3SSz.A.ckOY1W1msuZbTFVJBajIJG/9PqgeHzRAiS"
+    "hash": "$2b$10$VsGnidSYYH9M3SSz.A.ckOY1W1msuZbTFVJBajIJG/9PqgeHzRAiS",
+    "solves": 0
   },
   "riddle_r4_s1": {
     "round": 4,
@@ -225,7 +243,8 @@
     "points": 100,
     "text": "Arrr, crew! The captain's final archive has been encrypted. Only the worthy shall recover the lost treasure.\nSeven bytes guard the first secret's name,\nPass them through ASCII to enter the game.\nTurn Caesar's wheel three steps to the past,\nAnd uncover the destination hidden fast.\n\n01001111 01001100 01000101 01010101 01000100 01010101 01000010\n\nA second cipher conceals the next part of your quest:\nHQJLQHHULQJ\nShift three letters backward to reveal what comes next.\nAmong numbered guardians, let your deduction prevail;\nSeek the final secret on the knowledge trail!",
     "hint": "Decode the seven bytes using ASCII, then shift each letter three places backward using a Caesar cipher. Apply the same shift to the second encrypted word, and use the revealed clues to identify the final destination.",
-    "hash": "$2b$10$T1VwohE6KEHSfSIvdh552uHHssZpo4pL21JkffXS5bUNqRrswH6DO"
+    "hash": "$2b$10$T1VwohE6KEHSfSIvdh552uHHssZpo4pL21JkffXS5bUNqRrswH6DO",
+    "solves": 0
   },
   "riddle_r4_s2": {
     "round": 4,
@@ -237,6 +256,7 @@
     "points": 100,
     "text": "Arrr, engineers! The captain's final blueprint has been intercepted.\nEight-bit signals conceal the first key,\nDecode their language to learn what you seek.\nThen Caesar has shifted the second clue away;\nTurn three steps backward to uncover the way.\n\nTransmission Alpha\n01010111 01001111 01010010 01001011 01010011 01001000 01001111 01010000\n\nTransmission Beta\nVLJQ\n\nBut knowing the place won't complete the quest;\nWhere tools rest idle, your logic is tested.\nPast tables and machines, let your reasoning soar—\nFind the final secret without forcing a door!",
     "hint": "Let ASCII reveal the first location, then reverse the Caesar shift by three. Combine both clues to find where tools rest and the final secret awaits.",
-    "hash": "$2b$10$dXuHSoFGQMg2t/sACiMQNOrEZdyYrHCZH8TQ8dELvuG6QnJxTxTMy"
+    "hash": "$2b$10$dXuHSoFGQMg2t/sACiMQNOrEZdyYrHCZH8TQ8dELvuG6QnJxTxTMy",
+    "solves": 0
   }
 }

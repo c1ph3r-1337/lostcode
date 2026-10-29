@@ -4,44 +4,38 @@
       "roundNumber": 1,
       "name": "Round 1: Setting Sail",
       "startingTeams": 10,
-      "advancingTeams": 10,
-      "eliminations": 0,
+      "advancingTeams": 6,
+      "eliminations": 4,
       "slots": [
         {
           "slotId": "R1_S1",
           "riddleId": "riddle_r1_1",
-          "assignedTeamId": "crew_1_buccaneers",
-          "claimed": false
+          "assignedTeamId": "crew_1_buccaneers"
         },
         {
           "slotId": "R1_S2",
           "riddleId": "riddle_r1_2",
-          "assignedTeamId": "crew_2_cutthroats",
-          "claimed": false
+          "assignedTeamId": "crew_2_cutthroats"
         },
         {
           "slotId": "R1_S3",
           "riddleId": "riddle_r1_3",
-          "assignedTeamId": "crew_3_corsairs",
-          "claimed": false
+          "assignedTeamId": "crew_3_corsairs"
         },
         {
           "slotId": "R1_S4",
           "riddleId": "riddle_r1_4",
-          "assignedTeamId": "crew_4_krakens",
-          "claimed": false
+          "assignedTeamId": "crew_4_krakens"
         },
         {
           "slotId": "R1_S5",
           "riddleId": "riddle_r1_5",
-          "assignedTeamId": "crew_5_scallywags",
-          "claimed": false
+          "assignedTeamId": "crew_5_scallywags"
         },
         {
           "slotId": "R1_S6",
           "riddleId": "riddle_r1_6",
-          "assignedTeamId": "crew_6_privateers",
-          "claimed": false
+          "assignedTeamId": "crew_6_privateers"
         },
         {
           "slotId": "R1_S7",
@@ -72,102 +66,116 @@
     "2": {
       "roundNumber": 2,
       "name": "Round 2: High Seas",
-      "startingTeams": 10,
-      "advancingTeams": 6,
+      "startingTeams": 6,
+      "advancingTeams": 2,
       "eliminations": 4,
+      "slots": [
+        {
+          "slotId": "R2_GA_S1",
+          "slotIndex": 1,
+          "label": "Slot 1 (1st R1 Qualifier)",
+          "riddleId": "riddle_r2_g1_1",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R2_GA_S2",
+          "slotIndex": 2,
+          "label": "Slot 2 (2nd R1 Qualifier)",
+          "riddleId": "riddle_r2_g1_2",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R2_GA_S3",
+          "slotIndex": 3,
+          "label": "Slot 3 (3rd R1 Qualifier)",
+          "riddleId": "riddle_r2_g1_3",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R2_GB_S1",
+          "slotIndex": 4,
+          "label": "Slot 4 (4th R1 Qualifier)",
+          "riddleId": "riddle_r2_g2_1",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R2_GB_S2",
+          "slotIndex": 5,
+          "label": "Slot 5 (5th R1 Qualifier)",
+          "riddleId": "riddle_r2_g2_2",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R2_GB_S3",
+          "slotIndex": 6,
+          "label": "Slot 6 (6th R1 Qualifier)",
+          "riddleId": "riddle_r2_g2_3",
+          "assignedTeamId": null,
+          "claimed": false
+        }
+      ],
       "groups": {
         "A": {
           "groupName": "Group A",
-          "teams": [
-            "crew_1_buccaneers",
-            "crew_3_corsairs",
-            "crew_5_scallywags",
-            "crew_7_blackflags",
-            "crew_9_dreadsails"
-          ],
+          "teams": [],
           "slots": [
             {
               "slotId": "R2_GA_S1",
+              "slotIndex": 1,
+              "label": "Slot 1 (1st R1 Qualifier)",
               "riddleId": "riddle_r2_g1_1",
-              "eligibleTeams": [
-                "crew_1_buccaneers",
-                "crew_3_corsairs",
-                "crew_5_scallywags",
-                "crew_7_blackflags",
-                "crew_9_dreadsails"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             },
             {
               "slotId": "R2_GA_S2",
+              "slotIndex": 2,
+              "label": "Slot 2 (2nd R1 Qualifier)",
               "riddleId": "riddle_r2_g1_2",
-              "eligibleTeams": [
-                "crew_1_buccaneers",
-                "crew_3_corsairs",
-                "crew_5_scallywags",
-                "crew_7_blackflags",
-                "crew_9_dreadsails"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             },
             {
               "slotId": "R2_GA_S3",
+              "slotIndex": 3,
+              "label": "Slot 3 (3rd R1 Qualifier)",
               "riddleId": "riddle_r2_g1_3",
-              "eligibleTeams": [
-                "crew_1_buccaneers",
-                "crew_3_corsairs",
-                "crew_5_scallywags",
-                "crew_7_blackflags",
-                "crew_9_dreadsails"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             }
           ]
         },
         "B": {
           "groupName": "Group B",
-          "teams": [
-            "crew_2_cutthroats",
-            "crew_4_krakens",
-            "crew_6_privateers",
-            "crew_8_plunderers",
-            "crew_10_searavens"
-          ],
+          "teams": [],
           "slots": [
             {
               "slotId": "R2_GB_S1",
+              "slotIndex": 4,
+              "label": "Slot 4 (4th R1 Qualifier)",
               "riddleId": "riddle_r2_g2_1",
-              "eligibleTeams": [
-                "crew_2_cutthroats",
-                "crew_4_krakens",
-                "crew_6_privateers",
-                "crew_8_plunderers",
-                "crew_10_searavens"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             },
             {
               "slotId": "R2_GB_S2",
+              "slotIndex": 5,
+              "label": "Slot 5 (5th R1 Qualifier)",
               "riddleId": "riddle_r2_g2_2",
-              "eligibleTeams": [
-                "crew_2_cutthroats",
-                "crew_4_krakens",
-                "crew_6_privateers",
-                "crew_8_plunderers",
-                "crew_10_searavens"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             },
             {
               "slotId": "R2_GB_S3",
+              "slotIndex": 6,
+              "label": "Slot 6 (6th R1 Qualifier)",
               "riddleId": "riddle_r2_g2_3",
-              "eligibleTeams": [
-                "crew_2_cutthroats",
-                "crew_4_krakens",
-                "crew_6_privateers",
-                "crew_8_plunderers",
-                "crew_10_searavens"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             }
           ]
@@ -177,50 +185,52 @@
     "3": {
       "roundNumber": 3,
       "name": "Round 3: Dead Man's Creek",
-      "startingTeams": 6,
+      "startingTeams": 2,
       "advancingTeams": 2,
-      "eliminations": 4,
+      "eliminations": 0,
+      "slots": [
+        {
+          "slotId": "R3_GA_S1",
+          "slotIndex": 1,
+          "label": "Slot 1 (1st R2 Qualifier)",
+          "riddleId": "riddle_r3_g1_1",
+          "assignedTeamId": null,
+          "claimed": false
+        },
+        {
+          "slotId": "R3_GB_S1",
+          "slotIndex": 2,
+          "label": "Slot 2 (2nd R2 Qualifier)",
+          "riddleId": "riddle_r3_g2_1",
+          "assignedTeamId": null,
+          "claimed": false
+        }
+      ],
       "groups": {
         "A": {
           "groupName": "Group A",
-          "teams": [
-            "crew_1_buccaneers",
-            "crew_3_corsairs",
-            "crew_5_scallywags"
-          ],
+          "teams": [],
           "slots": [
             {
               "slotId": "R3_GA_S1",
+              "slotIndex": 1,
+              "label": "Slot 1 (1st R2 Qualifier)",
               "riddleId": "riddle_r3_g1_1",
-              "eligibleTeams": [
-                "crew_1_buccaneers",
-                "crew_3_corsairs",
-                "crew_5_scallywags",
-                "crew_7_blackflags",
-                "crew_9_dreadsails"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             }
           ]
         },
         "B": {
           "groupName": "Group B",
-          "teams": [
-            "crew_2_cutthroats",
-            "crew_4_krakens",
-            "crew_6_privateers"
-          ],
+          "teams": [],
           "slots": [
             {
               "slotId": "R3_GB_S1",
+              "slotIndex": 2,
+              "label": "Slot 2 (2nd R2 Qualifier)",
               "riddleId": "riddle_r3_g2_1",
-              "eligibleTeams": [
-                "crew_2_cutthroats",
-                "crew_4_krakens",
-                "crew_6_privateers",
-                "crew_8_plunderers",
-                "crew_10_searavens"
-              ],
+              "assignedTeamId": null,
               "claimed": false
             }
           ]
@@ -237,26 +247,18 @@
       "slots": [
         {
           "slotId": "R4_S1",
+          "trackIndex": 1,
+          "label": "Track 1 (Finalist 1)",
           "riddleId": "riddle_r4_s1",
-          "eligibleTeams": [
-            "crew_1_buccaneers",
-            "crew_3_corsairs",
-            "crew_5_scallywags",
-            "crew_7_blackflags",
-            "crew_9_dreadsails"
-          ],
+          "assignedTeamId": null,
           "claimed": false
         },
         {
           "slotId": "R4_S2",
+          "trackIndex": 2,
+          "label": "Track 2 (Finalist 2)",
           "riddleId": "riddle_r4_s2",
-          "eligibleTeams": [
-            "crew_2_cutthroats",
-            "crew_4_krakens",
-            "crew_6_privateers",
-            "crew_8_plunderers",
-            "crew_10_searavens"
-          ],
+          "assignedTeamId": null,
           "claimed": false
         }
       ]
