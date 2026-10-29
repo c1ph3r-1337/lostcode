@@ -75,16 +75,14 @@
           "slotIndex": 1,
           "label": "Slot 1 (1st R1 Qualifier)",
           "riddleId": "riddle_r2_g1_1",
-          "assignedTeamId": null,
-          "claimed": false
+          "assignedTeamId": null
         },
         {
           "slotId": "R2_GA_S2",
           "slotIndex": 2,
           "label": "Slot 2 (2nd R1 Qualifier)",
           "riddleId": "riddle_r2_g1_2",
-          "assignedTeamId": null,
-          "claimed": false
+          "assignedTeamId": null
         },
         {
           "slotId": "R2_GA_S3",
@@ -194,16 +192,14 @@
           "slotIndex": 1,
           "label": "Slot 1 (1st R2 Qualifier)",
           "riddleId": "riddle_r3_g1_1",
-          "assignedTeamId": null,
-          "claimed": false
+          "assignedTeamId": null
         },
         {
           "slotId": "R3_GB_S1",
           "slotIndex": 2,
           "label": "Slot 2 (2nd R2 Qualifier)",
           "riddleId": "riddle_r3_g2_1",
-          "assignedTeamId": null,
-          "claimed": false
+          "assignedTeamId": null
         }
       ],
       "groups": {
@@ -250,8 +246,7 @@
           "trackIndex": 1,
           "label": "Track 1 (Finalist 1)",
           "riddleId": "riddle_r4_s1",
-          "assignedTeamId": null,
-          "claimed": false
+          "assignedTeamId": null
         },
         {
           "slotId": "R4_S2",

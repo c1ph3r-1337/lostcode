@@ -95,7 +95,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -104,7 +104,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -113,7 +113,7 @@
         "finalSolveSeconds": null
       },
       "3": {
-        "startedAt": null,
+        "startedAt": 1793255857588,
         "durationMinutes": 20,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -122,6 +122,15 @@
         "finalSolveSeconds": null
       },
       "4": {
+        "startedAt": 1793255857710,
+        "durationMinutes": 15,
+        "hintPenaltiesMinutes": 0,
+        "bonusMinutes": 0,
+        "solved": false,
+        "solvedAt": null,
+        "finalSolveSeconds": null
+      },
+      "5": {
         "startedAt": null,
         "durationMinutes": 15,
         "hintPenaltiesMinutes": 0,
@@ -166,7 +175,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -175,7 +184,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -184,7 +193,7 @@
         "finalSolveSeconds": null
       },
       "3": {
-        "startedAt": null,
+        "startedAt": 1793255857588,
         "durationMinutes": 20,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -193,7 +202,7 @@
         "finalSolveSeconds": null
       },
       "4": {
-        "startedAt": null,
+        "startedAt": 1793255857710,
         "durationMinutes": 15,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -209,7 +218,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": null
+    "eliminatedAt": 1793255857746
   },
   {
     "id": "crew_3_corsairs",
@@ -237,7 +246,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -246,7 +255,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -280,7 +289,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": null
+    "eliminatedAt": 1793255857503
   },
   {
     "id": "crew_4_krakens",
@@ -308,7 +317,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -317,7 +326,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -351,7 +360,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": null
+    "eliminatedAt": 1793255857503
   },
   {
     "id": "crew_5_scallywags",
@@ -379,7 +388,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -388,7 +397,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -422,7 +431,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": null
+    "eliminatedAt": 1793255857503
   },
   {
     "id": "crew_6_privateers",
@@ -450,7 +459,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -459,7 +468,7 @@
         "finalSolveSeconds": null
       },
       "2": {
-        "startedAt": null,
+        "startedAt": 1793255856789,
         "durationMinutes": 25,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -493,7 +502,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": null
+    "eliminatedAt": 1793255857503
   },
   {
     "id": "crew_7_blackflags",
@@ -521,7 +530,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -564,7 +573,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": 1793255515106
+    "eliminatedAt": 1793255856697
   },
   {
     "id": "crew_8_plunderers",
@@ -592,7 +601,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -635,7 +644,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": 1793255515106
+    "eliminatedAt": 1793255856697
   },
   {
     "id": "crew_9_dreadsails",
@@ -663,7 +672,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -706,7 +715,7 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": 1793255515106
+    "eliminatedAt": 1793255856697
   },
   {
     "id": "crew_10_searavens",
@@ -734,7 +743,7 @@
     "roundSolves": {},
     "roundTimers": {
       "1": {
-        "startedAt": 1793255510714,
+        "startedAt": 1793255852826,
         "durationMinutes": 40,
         "hintPenaltiesMinutes": 0,
         "bonusMinutes": 0,
@@ -777,6 +786,6 @@
     "disqualifiedReason": null,
     "eliminatedRound": null,
     "eliminatedReason": null,
-    "eliminatedAt": 1793255515106
+    "eliminatedAt": 1793255856697
   }
 ]

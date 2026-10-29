@@ -1,34 +1,35 @@
 {
   "1": {
     "status": "Live",
-    "startedAt": "2026-10-29T06:31:50.624Z",
+    "startedAt": "2026-10-29T06:37:32.740Z",
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
     "eliminations": []
   },
   "2": {
-    "status": "Locked",
-    "startedAt": null,
+    "status": "Live",
+    "startedAt": "2026-10-29T06:37:36.787Z",
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
     "eliminations": []
   },
   "3": {
-    "status": "Locked",
-    "startedAt": null,
+    "status": "Live",
+    "startedAt": "2026-10-29T06:37:37.587Z",
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
     "eliminations": []
   },
   "4": {
-    "status": "Locked",
-    "startedAt": null,
+    "status": "Completed",
+    "startedAt": "2026-10-29T06:37:37.709Z",
     "completedAt": null,
     "qualifiers": [],
     "eliminated": [],
-    "eliminations": []
+    "eliminations": [],
+    "winner": "crew_1_buccaneers"
   }
 }

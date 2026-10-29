@@ -708,16 +708,37 @@ app.get('/api/team/challenge', (req, res) => {
     });
   }
 
-  // Atmospheric island station placeholder for participants (No clue/riddle leaks)
-  const participantIslandRiddle = {
-    id: slot?.riddleId || `island_r${roundNum}`,
-    title: roundTitles[roundNum] || `Island ${roundNum}`,
-    text: 'The physical realm holds the salvaged secrets of this island. Search the venue coordinates for hidden chits, decode the paper clues, and submit your retrieved password below.',
-    hasHint: false,
-    hint: null,
-    hintUnlocked: false,
-    points: 100
-  };
+  // For Round 1: Return team's assigned riddle ("same as before to have expected answer")
+  // For Rounds 2, 3, 4: Open pool with atmospheric placeholder
+  let participantIslandRiddle;
+  if (roundNum === 1) {
+    const riddleBank = getRiddleBank();
+    const assignedRiddleId = slot?.riddleId || (team.allocatedRiddles && team.allocatedRiddles['1']);
+    const assignedRiddle = assignedRiddleId ? riddleBank[assignedRiddleId] : null;
+    if (assignedRiddle) {
+      participantIslandRiddle = {
+        id: assignedRiddle.id,
+        title: assignedRiddle.title,
+        text: assignedRiddle.text,
+        points: assignedRiddle.points || 100,
+        hasHint: false,
+        hint: null,
+        hintUnlocked: false
+      };
+    }
+  }
+
+  if (!participantIslandRiddle) {
+    participantIslandRiddle = {
+      id: slot?.riddleId || `island_r${roundNum}`,
+      title: roundTitles[roundNum] || `Island ${roundNum}`,
+      text: 'The physical realm holds the salvaged secrets of this island. Search the venue coordinates for hidden chits, decode the paper clues, and submit your retrieved password below.',
+      hasHint: false,
+      hint: null,
+      hintUnlocked: false,
+      points: 100
+    };
+  }
 
   return res.json({
     success: true,
@@ -880,33 +901,59 @@ app.post('/api/team/submit', (req, res) => {
     }
   }
 
-  // 2. Open Pool Matching for active round:
-  // Any team in this round can submit any valid published password for roundNum
-  const roundPool = Object.values(riddleBank).filter(r => String(r.targetRound) === String(roundNum) && r.status === 'published');
+  // 2. Submission Matching:
+  // For Round 1: Strict team-specific assigned expected answer ("same as before to have expected answer")
+  // For Rounds 2, 3, 4: Open pool ("no expected answer, any right answer can be filled by any team round wise")
   let matchedRiddle = null;
-  for (const rObj of roundPool) {
-    if (checkAnswerMatch(answer, rObj.expectedAnswer, rObj.answerMatchingRule)) {
-      matchedRiddle = rObj;
-      break;
+
+  if (roundNum === 1) {
+    const slot = findTeamSlotInRound(assignments, 1, team.id);
+    const assignedRiddleId = slot?.riddleId || (team.allocatedRiddles && team.allocatedRiddles['1']);
+    const assignedRiddle = assignedRiddleId ? riddleBank[assignedRiddleId] : null;
+
+    if (!assignedRiddle) {
+      return res.status(400).json({
+        success: false,
+        message: 'No assigned riddle found for your crew in Round 1.',
+        qualified: false
+      });
     }
-  }
 
-  if (!matchedRiddle) {
-    return res.json({
-      success: false,
-      message: 'Avast! That flag be incorrect. Check your coordinates and try again.',
-      qualified: false
-    });
-  }
+    if (!checkAnswerMatch(answer, assignedRiddle.expectedAnswer, assignedRiddle.answerMatchingRule)) {
+      return res.json({
+        success: false,
+        message: "Avast! That flag does not match your crew's assigned riddle for Round 1. Check your coordinates and try again.",
+        qualified: false
+      });
+    }
+    matchedRiddle = assignedRiddle;
+  } else {
+    // Rounds 2, 3, 4: Open pool
+    const roundPool = Object.values(riddleBank).filter(r => String(r.targetRound) === String(roundNum) && r.status === 'published');
+    for (const rObj of roundPool) {
+      if (checkAnswerMatch(answer, rObj.expectedAnswer, rObj.answerMatchingRule)) {
+        matchedRiddle = rObj;
+        break;
+      }
+    }
 
-  // 3. Single-Claim Check: Has another crew already claimed this exact password/riddle in this round?
-  const alreadyClaimedTeam = teams.find(t => !isAdminTeam(t) && t.id !== team.id && t.roundSolves && t.roundSolves[String(roundNum)]?.riddleId === matchedRiddle.id);
-  if (alreadyClaimedTeam) {
-    return res.json({
-      success: false,
-      message: 'Treasure claimed! Another crew claimed this relic seconds before ye. Search for another hidden clue!',
-      qualified: false
-    });
+    if (!matchedRiddle) {
+      return res.json({
+        success: false,
+        message: `Avast! That flag be incorrect for Round ${roundNum}. Check your coordinates and try again.`,
+        qualified: false
+      });
+    }
+
+    // 3. Single-Claim Check for open rounds: Has another crew already claimed this exact password/riddle in this round?
+    const alreadyClaimedTeam = teams.find(t => !isAdminTeam(t) && t.id !== team.id && t.roundSolves && t.roundSolves[String(roundNum)]?.riddleId === matchedRiddle.id);
+    if (alreadyClaimedTeam) {
+      return res.json({
+        success: false,
+        message: 'Treasure claimed! Another crew claimed this relic seconds before ye. Search for another hidden clue!',
+        qualified: false
+      });
+    }
   }
 
   // 4. Synchronously claim slot in persistent tournament assignments

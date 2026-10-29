@@ -1,5 +1,77 @@
 [
   {
+    "id": "audit_1793255857842_4b6n",
+    "timestamp": "2026-10-29T06:37:37.842Z",
+    "action": "CLEAR_TEST_SUBMISSIONS",
+    "admin": "admin@lostcode",
+    "reason": "Cleared submitted answers and solves for ALL teams.",
+    "details": {
+      "targetTeamId": "ALL",
+      "targetRound": null
+    }
+  },
+  {
+    "id": "audit_1793255857717_g1ke",
+    "timestamp": "2026-10-29T06:37:37.718Z",
+    "action": "ROUND_ACTIVATION",
+    "admin": "admin@lostcode",
+    "reason": "Round 4 successfully activated to Live state",
+    "details": {
+      "round": 4
+    }
+  },
+  {
+    "id": "audit_1793255857593_kc1s",
+    "timestamp": "2026-10-29T06:37:37.593Z",
+    "action": "ROUND_ACTIVATION",
+    "admin": "admin@lostcode",
+    "reason": "Round 3 successfully activated to Live state",
+    "details": {
+      "round": 3
+    }
+  },
+  {
+    "id": "audit_1793255856794_jbfk",
+    "timestamp": "2026-10-29T06:37:36.794Z",
+    "action": "ROUND_ACTIVATION",
+    "admin": "admin@lostcode",
+    "reason": "Round 2 successfully activated to Live state",
+    "details": {
+      "round": 2
+    }
+  },
+  {
+    "id": "audit_1793255852840_qce4",
+    "timestamp": "2026-10-29T06:37:32.840Z",
+    "action": "START_TOURNAMENT",
+    "admin": "admin@lostcode",
+    "reason": "Tournament started by Admiralty. Round 1 individual timers started for active crews.",
+    "details": {
+      "startedAt": 1793255852826
+    }
+  },
+  {
+    "id": "audit_1793255852748_2ajg",
+    "timestamp": "2026-10-29T06:37:32.748Z",
+    "action": "ROUND_ACTIVATION",
+    "admin": "admin@lostcode",
+    "reason": "Round 1 successfully activated to Live state",
+    "details": {
+      "round": 1
+    }
+  },
+  {
+    "id": "audit_1793255852689_f0zf",
+    "timestamp": "2026-10-29T06:37:32.689Z",
+    "action": "CLEAR_TEST_SUBMISSIONS",
+    "admin": "admin@lostcode",
+    "reason": "Cleared submitted answers and solves for ALL teams.",
+    "details": {
+      "targetTeamId": "ALL",
+      "targetRound": null
+    }
+  },
+  {
     "id": "audit_1793255515210_f98t",
     "timestamp": "2026-10-29T06:31:55.210Z",
     "action": "CLEAR_TEST_SUBMISSIONS",
